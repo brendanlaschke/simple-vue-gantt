@@ -22,6 +22,8 @@ export interface GanttTask {
   projectId?: string;
   /** Whether this is a milestone (renders as diamond) */
   isMilestone?: boolean;
+  /** Optional swim lane ID this task belongs to */
+  swimlaneId?: string;
 }
 
 /**
@@ -55,6 +57,20 @@ export interface GanttProject {
   /** Optional custom color for the project */
   color?: string;
   /** Optional metadata that can be attached to the project */
+  metadata?: Record<string, unknown>;
+}
+
+/**
+ * Represents a swim lane for grouping tasks
+ */
+export interface GanttSwimlane {
+  /** Unique identifier for the swim lane */
+  id: string;
+  /** Display name of the swim lane */
+  name: string;
+  /** Optional custom color for the swim lane */
+  color?: string;
+  /** Optional metadata that can be attached to the swim lane */
   metadata?: Record<string, unknown>;
 }
 
@@ -101,6 +117,12 @@ export interface GanttOptions {
   editPosition?: boolean;
   /** Whether to hide dependency arrows when source or target is not visible (collapsed) */
   hideOrphanDependencies?: boolean;
+  /** Whether to enable swim lanes */
+  enableSwimlanes?: boolean;
+  /** Height of swim lane rows in pixels */
+  swimlaneHeight?: number;
+  /** Whether to show task names inside task bars */
+  showTaskNameInBar?: boolean;
 }
 
 /**
@@ -111,6 +133,7 @@ export interface RenderedTask extends GanttTask {
   y: number;
   width: number;
   isVisible?: boolean;
+  row?: number; // For swim lane packing
 }
 
 /**
@@ -129,6 +152,15 @@ export interface RenderedProject extends GanttProject {
   isExpanded: boolean;
   taskCount: number;
   y: number;
+}
+
+/**
+ * Internal representation of a swim lane with state
+ */
+export interface RenderedSwimlane extends GanttSwimlane {
+  y: number;
+  height: number;
+  rowCount: number;
 }
 
 /**
@@ -151,5 +183,6 @@ export interface GanttChartProps {
   tasks: GanttTask[];
   milestones?: GanttMilestone[];
   projects?: GanttProject[];
+  swimlanes?: GanttSwimlane[];
   options?: GanttOptions;
 }

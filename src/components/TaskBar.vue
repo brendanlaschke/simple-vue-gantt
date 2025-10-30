@@ -41,7 +41,7 @@
       font-size="12"
       font-weight="500"
     >
-      {{ task.progress }}%
+      {{ showTaskName ? task.name : `${task.progress}%` }}
     </text>
 
     <!-- Left Resize Handle -->
@@ -82,11 +82,13 @@ interface Props {
   viewMode: string
   editDuration?: boolean
   editPosition?: boolean
+  showTaskName?: boolean
 }
 
 const props = withDefaults(defineProps<Props>(), {
   editDuration: false,
-  editPosition: false
+  editPosition: false,
+  showTaskName: false
 })
 
 const emit = defineEmits<{

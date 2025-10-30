@@ -3,9 +3,10 @@ import type {
   GanttTask,
   GanttMilestone,
   GanttProject,
+  GanttSwimlane,
   GanttOptions,
   ViewMode,
 } from "./types";
 
 export { GanttChart };
-export type { GanttTask, GanttMilestone, GanttProject, GanttOptions, ViewMode };
+export type { GanttTask, GanttMilestone, GanttProject, GanttSwimlane, GanttOptions, ViewMode };

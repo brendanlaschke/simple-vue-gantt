@@ -47,8 +47,4 @@ withDefaults(defineProps<Props>(), {
 .gantt-sidebar__header--two-rows {
   height: 80px;
 }
-
-.gantt-sidebar__content {
-  padding: 8px 0;
-}
 </style>

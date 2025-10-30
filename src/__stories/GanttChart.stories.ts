@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/vue3";
 import GanttChart from "../components/GanttChart.vue";
-import type { GanttTask, GanttMilestone, GanttProject } from "../types";
+import type { GanttTask, GanttMilestone, GanttProject, GanttSwimlane } from "../types";
 
 const meta: Meta<typeof GanttChart> = {
   title: "Components/GanttChart",
@@ -604,6 +604,398 @@ export const Performance1000Tasks: Story = {
     docs: {
       description: {
         story: 'Performance test with 1000 tasks. Dependencies are disabled for better rendering performance.',
+      },
+    },
+  },
+};
+
+// Swim lanes data
+const swimlanes: GanttSwimlane[] = [
+  {
+    id: "team-a",
+    name: "Development Team A",
+    color: "#eff6ff",
+  },
+  {
+    id: "team-b",
+    name: "Development Team B",
+    color: "#fef3f2",
+  },
+  {
+    id: "team-qa",
+    name: "QA Team",
+    color: "#f0fdf4",
+  },
+];
+
+// Tasks for swim lanes
+const swimlaneTasks: GanttTask[] = [
+  // Team A tasks
+  {
+    id: "1",
+    name: "Project Planning",
+    start: new Date("2024-10-01"),
+    end: new Date("2024-10-15"),
+    progress: 100,
+    color: "#10b981",
+    swimlaneId: "team-a",
+  },
+  {
+    id: "2",
+    name: "Requirements Analysis",
+    start: new Date("2024-10-10"),
+    end: new Date("2024-10-25"),
+    progress: 100,
+    dependencies: ["1"],
+    color: "#10b981",
+    swimlaneId: "team-a",
+  },
+  {
+    id: "3",
+    name: "Frontend Development",
+    start: new Date("2024-11-01"),
+    end: new Date("2024-12-15"),
+    progress: 45,
+    color: "#3b82f6",
+    swimlaneId: "team-a",
+  },
+  {
+    id: "4",
+    name: "Deployment Setup",
+    start: new Date("2024-12-10"),
+    end: new Date("2024-12-20"),
+    progress: 20,
+    color: "#14b8a6",
+    swimlaneId: "team-a",
+  },
+  // Team B tasks
+  {
+    id: "5",
+    name: "UI/UX Design",
+    start: new Date("2024-10-20"),
+    end: new Date("2024-11-10"),
+    progress: 75,
+    dependencies: ["2"],
+    color: "#8b5cf6",
+    swimlaneId: "team-b",
+  },
+  {
+    id: "6",
+    name: "Backend Development",
+    start: new Date("2024-11-05"),
+    end: new Date("2024-12-20"),
+    progress: 40,
+    dependencies: ["2"],
+    color: "#3b82f6",
+    swimlaneId: "team-b",
+  },
+  {
+    id: "7",
+    name: "Database Setup",
+    start: new Date("2024-10-18"),
+    end: new Date("2024-10-30"),
+    progress: 100,
+    color: "#3b82f6",
+    swimlaneId: "team-b",
+  },
+  // QA Team tasks
+  {
+    id: "8",
+    name: "Integration Testing",
+    start: new Date("2024-12-10"),
+    end: new Date("2024-12-28"),
+    progress: 20,
+    dependencies: ["3", "6"],
+    color: "#f59e0b",
+    swimlaneId: "team-qa",
+  },
+  {
+    id: "9",
+    name: "User Acceptance Testing",
+    start: new Date("2024-12-20"),
+    end: new Date("2025-01-10"),
+    progress: 10,
+    dependencies: ["8"],
+    color: "#f59e0b",
+    swimlaneId: "team-qa",
+  },
+  {
+    id: "10",
+    name: "Security Audit",
+    start: new Date("2024-11-15"),
+    end: new Date("2024-12-05"),
+    progress: 60,
+    color: "#ef4444",
+    swimlaneId: "team-qa",
+  },
+];
+
+// With Swim Lanes
+export const WithSwimlanes: Story = {
+  args: {
+    tasks: swimlaneTasks,
+    swimlanes: swimlanes,
+    options: {
+      viewMode: "day",
+      enableSwimlanes: true,
+      showTaskNameInBar: true,
+    },
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: 'Tasks organized in swim lanes. Multiple tasks can appear in the same lane if they don\'t overlap. Task names are shown inside the bars.',
+      },
+    },
+  },
+};
+
+// Tasks with both project and swimlane IDs
+const projectSwimlaneTasks: GanttTask[] = [
+  // Planning project - Team A
+  {
+    id: "1",
+    name: "Project Planning",
+    start: new Date("2024-10-01"),
+    end: new Date("2024-10-15"),
+    progress: 100,
+    color: "#10b981",
+    projectId: "project-1",
+    swimlaneId: "team-a",
+  },
+  {
+    id: "2",
+    name: "Requirements Analysis",
+    start: new Date("2024-10-10"),
+    end: new Date("2024-10-25"),
+    progress: 100,
+    dependencies: ["1"],
+    color: "#10b981",
+    projectId: "project-1",
+    swimlaneId: "team-a",
+  },
+  // Planning project - Team B
+  {
+    id: "3",
+    name: "Research",
+    start: new Date("2024-10-05"),
+    end: new Date("2024-10-20"),
+    progress: 100,
+    color: "#10b981",
+    projectId: "project-1",
+    swimlaneId: "team-b",
+  },
+  // Development project - Team A
+  {
+    id: "4",
+    name: "Frontend Setup",
+    start: new Date("2024-10-15"),
+    end: new Date("2024-11-01"),
+    progress: 80,
+    color: "#3b82f6",
+    projectId: "project-2",
+    swimlaneId: "team-a",
+  },
+  {
+    id: "5",
+    name: "Component Development",
+    start: new Date("2024-10-25"),
+    end: new Date("2024-11-20"),
+    progress: 60,
+    color: "#3b82f6",
+    projectId: "project-2",
+    swimlaneId: "team-a",
+  },
+  {
+    id: "6",
+    name: "Styling",
+    start: new Date("2024-11-05"),
+    end: new Date("2024-11-25"),
+    progress: 40,
+    color: "#3b82f6",
+    projectId: "project-2",
+    swimlaneId: "team-a",
+  },
+  // Development project - Team B
+  {
+    id: "7",
+    name: "API Design",
+    start: new Date("2024-10-20"),
+    end: new Date("2024-11-05"),
+    progress: 90,
+    color: "#3b82f6",
+    projectId: "project-2",
+    swimlaneId: "team-b",
+  },
+  {
+    id: "8",
+    name: "Database Schema",
+    start: new Date("2024-10-25"),
+    end: new Date("2024-11-10"),
+    progress: 75,
+    color: "#3b82f6",
+    projectId: "project-2",
+    swimlaneId: "team-b",
+  },
+  {
+    id: "9",
+    name: "Implementation",
+    start: new Date("2024-11-01"),
+    end: new Date("2024-12-01"),
+    progress: 50,
+    color: "#3b82f6",
+    projectId: "project-2",
+    swimlaneId: "team-b",
+  },
+  // Testing project - QA Team
+  {
+    id: "10",
+    name: "Test Planning",
+    start: new Date("2024-11-15"),
+    end: new Date("2024-11-25"),
+    progress: 80,
+    color: "#f59e0b",
+    projectId: "project-3",
+    swimlaneId: "team-qa",
+  },
+  {
+    id: "11",
+    name: "Integration Testing",
+    start: new Date("2024-11-20"),
+    end: new Date("2024-12-10"),
+    progress: 60,
+    color: "#f59e0b",
+    projectId: "project-3",
+    swimlaneId: "team-qa",
+  },
+  {
+    id: "12",
+    name: "UAT",
+    start: new Date("2024-12-05"),
+    end: new Date("2024-12-20"),
+    progress: 40,
+    color: "#f59e0b",
+    projectId: "project-3",
+    swimlaneId: "team-qa",
+  },
+];
+
+// With both Project Grouping and Swim Lanes
+export const WithProjectsAndSwimlanes: Story = {
+  args: {
+    tasks: projectSwimlaneTasks,
+    projects: projects,
+    swimlanes: swimlanes,
+    options: {
+      viewMode: "day",
+      enableProjectGrouping: true,
+      enableSwimlanes: true,
+      showTaskNameInBar: true,
+    },
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: 'Tasks organized by both projects and swim lanes. Projects can be collapsed/expanded. Within each project, tasks are grouped by swim lanes with automatic row packing.',
+      },
+    },
+  },
+};
+
+// Swim lanes with overlapping tasks demonstration
+const overlappingTasks: GanttTask[] = [
+  // Team A - Multiple overlapping tasks that will be packed into rows
+  {
+    id: "1",
+    name: "Task A1",
+    start: new Date("2024-10-01"),
+    end: new Date("2024-10-10"),
+    progress: 100,
+    color: "#10b981",
+    swimlaneId: "team-a",
+  },
+  {
+    id: "2",
+    name: "Task A2",
+    start: new Date("2024-10-05"),
+    end: new Date("2024-10-15"),
+    progress: 80,
+    color: "#3b82f6",
+    swimlaneId: "team-a",
+  },
+  {
+    id: "3",
+    name: "Task A3",
+    start: new Date("2024-10-12"),
+    end: new Date("2024-10-20"),
+    progress: 60,
+    color: "#8b5cf6",
+    swimlaneId: "team-a",
+  },
+  {
+    id: "4",
+    name: "Task A4",
+    start: new Date("2024-10-08"),
+    end: new Date("2024-10-18"),
+    progress: 70,
+    color: "#f59e0b",
+    swimlaneId: "team-a",
+  },
+  {
+    id: "5",
+    name: "Task A5",
+    start: new Date("2024-10-16"),
+    end: new Date("2024-10-25"),
+    progress: 50,
+    color: "#ef4444",
+    swimlaneId: "team-a",
+  },
+  // Team B - Non-overlapping tasks (will be in single row)
+  {
+    id: "6",
+    name: "Task B1",
+    start: new Date("2024-10-01"),
+    end: new Date("2024-10-07"),
+    progress: 100,
+    color: "#10b981",
+    swimlaneId: "team-b",
+  },
+  {
+    id: "7",
+    name: "Task B2",
+    start: new Date("2024-10-08"),
+    end: new Date("2024-10-14"),
+    progress: 90,
+    color: "#3b82f6",
+    swimlaneId: "team-b",
+  },
+  {
+    id: "8",
+    name: "Task B3",
+    start: new Date("2024-10-15"),
+    end: new Date("2024-10-21"),
+    progress: 80,
+    color: "#8b5cf6",
+    swimlaneId: "team-b",
+  },
+];
+
+export const SwimlanesWithOverlappingTasks: Story = {
+  args: {
+    tasks: overlappingTasks,
+    swimlanes: swimlanes.slice(0, 2), // Only Team A and Team B
+    options: {
+      viewMode: "day",
+      enableSwimlanes: true,
+      showTaskNameInBar: true,
+      barHeight: 30,
+      barPadding: 8,
+    },
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: 'Demonstrates automatic task packing in swim lanes. Team A has overlapping tasks that are packed into multiple rows, while Team B has sequential tasks in a single row.',
       },
     },
   },

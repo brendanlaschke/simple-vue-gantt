@@ -71,6 +71,11 @@
         </div>
 
         <div class="control">
+          <label for="enableSwimlanes">Enable Swim Lanes</label>
+          <input id="enableSwimlanes" v-model="enableSwimlanes" type="checkbox" />
+        </div>
+
+        <div class="control">
           <label for="editPosition">Allow Moving Tasks</label>
           <input id="editPosition" v-model="editPosition" type="checkbox" />
         </div>
@@ -91,6 +96,7 @@
       <GanttChart 
         v-model:tasks="tasks" 
         :projects="projects" 
+        :swimlanes="swimlanes"
         :options="options" 
         @task:update="onTaskUpdate"
         @task:move="onTaskMove"
@@ -116,9 +122,9 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import GanttChart from '../components/GanttChart.vue'
-import type { GanttTask, GanttProject, GanttOptions, ViewMode } from '../types'
+import type { GanttTask, GanttProject, GanttSwimlane, GanttOptions, ViewMode } from '../types'
 
-// Sample tasks data with project IDs
+// Sample tasks data with project IDs and swimlane IDs
 const tasks = ref<GanttTask[]>([
   {
     id: '1',
@@ -127,7 +133,8 @@ const tasks = ref<GanttTask[]>([
     end: new Date('2025-10-15'),
     progress: 100,
     color: '#10b981',
-    projectId: 'planning'
+    projectId: 'planning',
+    swimlaneId: 'team1'
   },
   {
     id: '2',
@@ -137,7 +144,8 @@ const tasks = ref<GanttTask[]>([
     progress: 100,
     dependencies: ['1'],
     color: '#10b981',
-    projectId: 'planning'
+    projectId: 'planning',
+    swimlaneId: 'team1'
   },
   {
     id: '3',
@@ -147,7 +155,8 @@ const tasks = ref<GanttTask[]>([
     progress: 75,
     dependencies: ['2'],
     color: '#8b5cf6',
-    projectId: 'design'
+    projectId: 'design',
+    swimlaneId: 'team2'
   },
   {
     id: '4',
@@ -157,7 +166,8 @@ const tasks = ref<GanttTask[]>([
     progress: 45,
     dependencies: ['3'],
     color: '#3b82f6',
-    projectId: 'development'
+    projectId: 'development',
+    swimlaneId: 'team1'
   },
   {
     id: '5',
@@ -167,7 +177,8 @@ const tasks = ref<GanttTask[]>([
     progress: 40,
     dependencies: ['2'],
     color: '#3b82f6',
-    projectId: 'development'
+    projectId: 'development',
+    swimlaneId: 'team2'
   },
   {
     id: '6',
@@ -177,7 +188,8 @@ const tasks = ref<GanttTask[]>([
     progress: 20,
     dependencies: ['4', '5'],
     color: '#f59e0b',
-    projectId: 'testing'
+    projectId: 'testing',
+    swimlaneId: 'team3'
   },
   {
     id: '7',
@@ -187,7 +199,8 @@ const tasks = ref<GanttTask[]>([
     progress: 10,
     dependencies: ['6'],
     color: '#f59e0b',
-    projectId: 'testing'
+    projectId: 'testing',
+    swimlaneId: 'team3'
   },
   {
     id: '8',
@@ -197,8 +210,29 @@ const tasks = ref<GanttTask[]>([
     progress: 0,
     dependencies: ['7'],
     color: '#14b8a6',
-    projectId: 'deployment'
-  }
+    projectId: 'deployment',
+    swimlaneId: 'team1'
+  },
+  {
+    id: '9',
+    name: 'Database Setup',
+    start: new Date('2025-10-18'),
+    end: new Date('2025-10-30'),
+    progress: 100,
+    color: '#3b82f6',
+    projectId: 'development',
+    swimlaneId: 'team2'
+  },
+  {
+    id: '10',
+    name: 'Security Audit',
+    start: new Date('2025-11-15'),
+    end: new Date('2025-12-05'),
+    progress: 60,
+    color: '#ef4444',
+    projectId: 'testing',
+    swimlaneId: 'team3'
+  },
 ])
 
 // Projects data
@@ -230,6 +264,25 @@ const projects = ref<GanttProject[]>([
   }
 ])
 
+// Swim lanes data
+const swimlanes = ref<GanttSwimlane[]>([
+  {
+    id: 'team1',
+    name: 'Development Team A',
+    color: '#eff6ff'
+  },
+  {
+    id: 'team2',
+    name: 'Development Team B',
+    color: '#fef3f2'
+  },
+  {
+    id: 'team3',
+    name: 'QA Team',
+    color: '#f0fdf4'
+  }
+])
+
 // Chart options
 const viewMode = ref<ViewMode>('day')
 const barHeight = ref(30)
@@ -239,6 +292,7 @@ const showGrid = ref(true)
 const showToday = ref(true)
 const showDependencies = ref(true)
 const enableProjectGrouping = ref(false)
+const enableSwimlanes = ref(false)
 const editPosition = ref(true)
 const editDuration = ref(true)
 const hideOrphanDependencies = ref(false)
@@ -321,6 +375,7 @@ const options = computed<GanttOptions>(() => ({
   showToday: showToday.value,
   showDependencies: showDependencies.value,
   enableProjectGrouping: enableProjectGrouping.value,
+  enableSwimlanes: enableSwimlanes.value,
   editPosition: editPosition.value,
   editDuration: editDuration.value,
   hideOrphanDependencies: hideOrphanDependencies.value,

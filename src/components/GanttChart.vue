@@ -3,11 +3,60 @@
     <div class="vue-gantt__container">
       <!-- Sidebar with Task Names -->
       <GanttSidebar 
-        :title="enableProjectGrouping ? 'Projects & Tasks' : 'Tasks'"
+        :title="enableSwimlanes && enableProjectGrouping ? 'Projects & Swim Lanes' : (enableSwimlanes ? 'Swim Lanes' : (enableProjectGrouping ? 'Projects & Tasks' : 'Tasks'))"
         :use-two-row-headers="useTwoRowHeaders"
       >
-        <!-- Project Grouping Mode -->
-        <template v-if="enableProjectGrouping">
+        <!-- Project Grouping + Swim Lane Mode -->
+        <template v-if="enableSwimlanes && enableProjectGrouping">
+          <template v-for="project in renderedProjects" :key="project.id">
+            <!-- Project Header -->
+            <ProjectHeader
+              :name="project.name"
+              :height="projectHeaderHeight"
+              :top="project.y"
+              :is-expanded="project.isExpanded"
+              :task-count="project.taskCount"
+              @toggle="toggleProject(project.id)"
+            />
+            
+            <!-- Swimlanes within this project -->
+            <template v-if="project.isExpanded">
+              <SwimlaneLabel
+                v-for="swimlane in swimlanesForProject(project.id)"
+                :key="swimlane.id"
+                :name="swimlane.name"
+                :height="swimlane.height"
+                :top="swimlane.y"
+                :color="swimlane.color"
+              />
+            </template>
+          </template>
+
+          <!-- Orphan swimlanes (no project) -->
+          <SwimlaneLabel
+            v-for="swimlane in orphanSwimlanes"
+            :key="swimlane.id"
+            :name="swimlane.name"
+            :height="swimlane.height"
+            :top="swimlane.y"
+            :color="swimlane.color"
+          />
+        </template>
+
+        <!-- Swim Lane Mode (without project grouping) -->
+        <template v-else-if="enableSwimlanes">
+          <SwimlaneLabel
+            v-for="swimlane in renderedSwimlanes"
+            :key="swimlane.id"
+            :name="swimlane.name"
+            :height="swimlane.height"
+            :top="swimlane.y"
+            :color="swimlane.color"
+          />
+        </template>
+
+        <!-- Project Grouping Mode (without swim lanes) -->
+        <template v-else-if="enableProjectGrouping">
           <template v-for="project in renderedProjects" :key="project.id">
             <!-- Project Header -->
             <ProjectHeader
@@ -99,6 +148,7 @@
                 :view-mode="options.viewMode || 'day'"
                 :edit-duration="options.editDuration"
                 :edit-position="options.editPosition"
+                :show-task-name="showTaskNameInBar || enableSwimlanes"
                 @update:task="handleTaskUpdate"
               />
             </g>
@@ -129,7 +179,7 @@
 
 <script setup lang="ts">
 import { computed, toRefs } from 'vue'
-import type { GanttTask, GanttMilestone, GanttProject, GanttOptions } from '@/types'
+import type { GanttTask, GanttMilestone, GanttProject, GanttSwimlane, GanttOptions } from '@/types'
 import { useGanttChart } from '@/composables/useGanttChart'
 import { getDaysDiff } from '@/utils/dateDifference'
 import GanttSidebar from './GanttSidebar.vue'
@@ -141,16 +191,19 @@ import MilestoneMarker from './MilestoneMarker.vue'
 import DependencyArrows from './DependencyArrows.vue'
 import TaskName from './TaskName.vue'
 import ProjectHeader from './ProjectHeader.vue'
+import SwimlaneLabel from './SwimlaneLabel.vue'
 import { createRectangularPath } from '../utils/rectangularEdge'
 
 const props = withDefaults(defineProps<{
   tasks: GanttTask[]
   milestones?: GanttMilestone[]
   projects?: GanttProject[]
+  swimlanes?: GanttSwimlane[]
   options?: GanttOptions
 }>(), {
   milestones: () => [],
   projects: () => [],
+  swimlanes: () => [],
   options: () => ({})
 })
 
@@ -161,7 +214,7 @@ const emit = defineEmits<{
   'task:resize': [taskId: string, start: Date, end: Date]
 }>()
 
-const { tasks, milestones, projects, options } = toRefs(props)
+const { tasks, milestones, projects, swimlanes, options } = toRefs(props)
 
 const {
   chartStartDate,
@@ -170,6 +223,7 @@ const {
   renderedTasks,
   renderedMilestones,
   renderedProjects,
+  renderedSwimlanes,
   chartWidth,
   chartHeight,
   toggleProject
@@ -177,6 +231,7 @@ const {
   computed(() => tasks.value),
   computed(() => milestones.value), 
   computed(() => projects.value),
+  computed(() => swimlanes.value),
   computed(() => options.value)
 )
 
@@ -190,10 +245,12 @@ const showDependencies = computed(() => options.value.showDependencies !== false
 const gridColor = computed(() => options.value.gridColor || '#e5e7eb')
 const todayColor = computed(() => options.value.todayColor || '#ef4444')
 const enableProjectGrouping = computed(() => options.value.enableProjectGrouping || false)
+const enableSwimlanes = computed(() => options.value.enableSwimlanes || false)
 const projectHeaderHeight = computed(() => options.value.projectHeaderHeight || 35)
 const milestoneSize = computed(() => options.value.milestoneSize || 16)
 const showMilestoneLabels = computed(() => options.value.showMilestoneLabels !== false)
 const hideOrphanDependencies = computed(() => options.value.hideOrphanDependencies !== false)
+const showTaskNameInBar = computed(() => options.value.showTaskNameInBar || false)
 
 // Handle task updates from drag operations
 const handleTaskUpdate = (taskId: string, updates: { start?: Date; end?: Date }) => {
@@ -234,10 +291,22 @@ const handleTaskUpdate = (taskId: string, updates: { start?: Date; end?: Date })
 const tasksForProject = (projectId: string) => {
   return tasks.value.filter(t => t.projectId === projectId)
 }
+
+// Helper to get swimlanes for a specific project
+const swimlanesForProject = (projectId: string) => {
+  return renderedSwimlanes.value.filter(s => s.id.startsWith(`${projectId}-`))
+}
+
 // Get orphan tasks (tasks without a project)
 const orphanTasks = computed(() => {
   return tasks.value.filter(t => !t.projectId)
 })
+
+// Get orphan swimlanes (swimlanes without a project prefix in combined mode)
+const orphanSwimlanes = computed(() => {
+  return renderedSwimlanes.value.filter(s => !s.id.includes('-') || swimlanes.value.some(sl => sl.id === s.id))
+})
+
 // Filter visible tasks (used for rendering in project mode)
 const visibleTasks = computed(() => {
   return renderedTasks.value.filter(t => t.isVisible !== false)
@@ -447,7 +516,6 @@ const primaryPeriods = computed<PrimaryPeriod[]>(() => {
 
 .vue-gantt__chart {
   position: relative;
-  padding: 8px 0;
 }
 
 .vue-gantt__svg {

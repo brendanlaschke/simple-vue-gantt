@@ -27,7 +27,10 @@
     "format:check": "oxfmt --check src",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
-    "test": "vitest --project=storybook"
+    "test": "vitest --project=storybook",
+    "test:unit": "vitest run",
+    "test:unit:watch": "vitest",
+    "test:coverage": "vitest run --coverage"
   },
   "keywords": [
     "vue",
