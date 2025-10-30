@@ -71,6 +71,11 @@
         </div>
 
         <div class="control">
+          <label for="showProjectSummary">Show Project Summary</label>
+          <input id="showProjectSummary" v-model="showProjectSummary" type="checkbox" />
+        </div>
+
+        <div class="control">
           <label for="enableSwimlanes">Enable Swim Lanes</label>
           <input id="enableSwimlanes" v-model="enableSwimlanes" type="checkbox" />
         </div>
@@ -88,6 +93,11 @@
         <div class="control">
           <label for="hideOrphanDependencies">Hide Orphan Dependencies</label>
           <input id="hideOrphanDependencies" v-model="hideOrphanDependencies" type="checkbox" />
+        </div>
+
+        <div class="control">
+          <label for="showTaskProgress">Show Task Progress (%)</label>
+          <input id="showTaskProgress" v-model="showTaskProgress" type="checkbox" />
         </div>
       </div>
     </div>
@@ -287,10 +297,12 @@ const showGrid = ref(true)
 const showToday = ref(true)
 const showDependencies = ref(true)
 const enableProjectGrouping = ref(false)
+const showProjectSummary = ref(true)
 const enableSwimlanes = ref(false)
 const editPosition = ref(true)
 const editDuration = ref(true)
 const hideOrphanDependencies = ref(false)
+const showTaskProgress = ref(false)
 
 // Event log
 interface LogEvent {
@@ -370,9 +382,11 @@ const options = computed<GanttOptions>(() => ({
   showToday: showToday.value,
   showDependencies: showDependencies.value,
   enableProjectGrouping: enableProjectGrouping.value,
+  showProjectSummary: showProjectSummary.value,
   enableSwimlanes: enableSwimlanes.value,
   editPosition: editPosition.value,
   editDuration: editDuration.value,
   hideOrphanDependencies: hideOrphanDependencies.value,
+  showTaskProgress: showTaskProgress.value,
 }))
 </script>

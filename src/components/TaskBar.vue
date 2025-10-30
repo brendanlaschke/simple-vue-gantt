@@ -41,7 +41,8 @@
       font-size="12"
       font-weight="500"
     >
-      {{ showTaskName ? task.name : `${task.progress}%` }}
+      <tspan >{{ task.name }}</tspan>
+      <tspan v-if="showProgress"> - {{ task.progress }}%</tspan>
     </text>
 
     <!-- Left Resize Handle -->
@@ -82,13 +83,13 @@ interface Props {
   viewMode: string
   editDuration?: boolean
   editPosition?: boolean
-  showTaskName?: boolean
+  showProgress?: boolean
 }
 
 const props = withDefaults(defineProps<Props>(), {
   editDuration: false,
   editPosition: false,
-  showTaskName: false
+  showProgress: false
 })
 
 const emit = defineEmits<{

@@ -119,8 +119,10 @@ export interface GanttOptions {
   enableSwimlanes?: boolean;
   /** Height of swim lane rows in pixels */
   swimlaneHeight?: number;
-  /** Whether to show task names inside task bars */
-  showTaskNameInBar?: boolean;
+  /** Whether to show project summary bars in project headers */
+  showProjectSummary?: boolean;
+  /** Whether to show progress percentage as text on task bars */
+  showTaskProgress?: boolean;
 }
 
 /**
@@ -150,6 +152,11 @@ export interface RenderedProject extends GanttProject {
   isExpanded: boolean;
   taskCount: number;
   y: number;
+  height: number;
+  start?: Date;
+  end?: Date;
+  x?: number;
+  width?: number;
 }
 
 /**

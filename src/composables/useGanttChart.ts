@@ -68,7 +68,8 @@ const DEFAULT_OPTIONS: Required<GanttOptions> = {
   hideOrphanDependencies: true,
   enableSwimlanes: false,
   swimlaneHeight: 80,
-  showTaskNameInBar: false,
+  showProjectSummary: true,
+  showTaskProgress: false,
 };
 
 export function useGanttChart(
@@ -153,26 +154,173 @@ export function useGanttChart(
     }
 
     let currentY = 0;
-    return projects.value.map((project) => {
-      const taskCount = tasks.value.filter(
+    const result: RenderedProject[] = [];
+
+    projects.value.forEach((project) => {
+      const projectTasks = tasks.value.filter(
         (t) => t.projectId === project.id
-      ).length;
+      );
+      const taskCount = projectTasks.length;
       const isExpanded = projectStates.value.get(project.id) ?? true;
+
+      // Calculate project summary dates (start of first task to end of last task)
+      let projectStart: Date | undefined;
+      let projectEnd: Date | undefined;
+      let projectX: number | undefined;
+      let projectWidth: number | undefined;
+
+      if (projectTasks.length > 0) {
+        // Find the earliest start and latest end
+        projectStart = projectTasks.reduce((min, task) => {
+          return task.start < min ? task.start : min;
+        }, projectTasks[0].start);
+
+        projectEnd = projectTasks.reduce((max, task) => {
+          return task.end > max ? task.end : max;
+        }, projectTasks[0].end);
+
+        // Calculate x position and width based on view mode
+        switch (viewMode.value) {
+          case "hour": {
+            const startHours = getHoursDiff(chartStartDate.value, projectStart);
+            const durationHours = getHoursDiff(projectStart, projectEnd);
+            projectX = startHours * columnWidth.value;
+            projectWidth = durationHours * columnWidth.value;
+            break;
+          }
+          case "day": {
+            const startDiff = getDaysDiff(chartStartDate.value, projectStart);
+            const duration = getDaysDiff(projectStart, projectEnd);
+            projectX = startDiff * columnWidth.value;
+            projectWidth = duration * columnWidth.value;
+            break;
+          }
+          case "week": {
+            const startDiff = getDaysDiff(chartStartDate.value, projectStart);
+            const duration = getDaysDiff(projectStart, projectEnd);
+            projectX = (startDiff / 7) * columnWidth.value;
+            projectWidth = (duration / 7) * columnWidth.value;
+            break;
+          }
+          case "month": {
+            const startMonths = getMonthsDiff(chartStartDate.value, projectStart);
+            const durationMonths = getMonthsDiff(projectStart, projectEnd);
+            projectX = startMonths * columnWidth.value;
+            projectWidth = durationMonths * columnWidth.value;
+            break;
+          }
+          case "year": {
+            const startYears = getYearsDiff(chartStartDate.value, projectStart);
+            const durationYears = getYearsDiff(projectStart, projectEnd);
+            projectX = startYears * columnWidth.value;
+            projectWidth = durationYears * columnWidth.value;
+            break;
+          }
+          default:
+            projectX = 0;
+            projectWidth = 0;
+        }
+
+        projectX = Math.max(0, projectX);
+        projectWidth = Math.max(columnWidth.value / 2, projectWidth);
+      }
 
       const rendered: RenderedProject = {
         ...project,
         isExpanded,
         taskCount,
         y: currentY,
+        height: 0, // Will be calculated below
+        start: projectStart,
+        end: projectEnd,
+        x: projectX,
+        width: projectWidth,
       };
 
-      currentY += mergedOptions.value.projectHeaderHeight;
+      const projectHeaderHeight = mergedOptions.value.projectHeaderHeight;
+      currentY += projectHeaderHeight;
+      
+      let projectContentHeight = 0;
       if (isExpanded) {
-        currentY += taskCount * (barHeight.value + barPadding.value);
-      }
+        // When swimlanes are enabled, calculate height based on swimlane packing
+        if (mergedOptions.value.enableSwimlanes) {
+          swimlanes.value.forEach((swimlane) => {
+            const projectSwimlaneTasks = tasks.value.filter(
+              (t) => t.projectId === project.id && t.swimlaneId === swimlane.id
+            );
 
-      return rendered;
+            if (projectSwimlaneTasks.length === 0) return;
+
+            // Calculate positions for packing
+            const tasksWithPositions = projectSwimlaneTasks.map((task) => {
+              const startDiff = getDaysDiff(chartStartDate.value, task.start);
+              const duration = getDaysDiff(task.start, task.end);
+
+              let x: number;
+              let width: number;
+
+              switch (viewMode.value) {
+                case "hour": {
+                  const startHours = getHoursDiff(chartStartDate.value, task.start);
+                  const durationHours = getHoursDiff(task.start, task.end);
+                  x = startHours * columnWidth.value;
+                  width = durationHours * columnWidth.value;
+                  break;
+                }
+                case "day":
+                  x = startDiff * columnWidth.value;
+                  width = duration * columnWidth.value;
+                  break;
+                case "week":
+                  x = (startDiff / 7) * columnWidth.value;
+                  width = (duration / 7) * columnWidth.value;
+                  break;
+                case "month": {
+                  const startMonths = getMonthsDiff(chartStartDate.value, task.start);
+                  const durationMonths = getMonthsDiff(task.start, task.end);
+                  x = startMonths * columnWidth.value;
+                  width = durationMonths * columnWidth.value;
+                  break;
+                }
+                case "year": {
+                  const startYears = getYearsDiff(chartStartDate.value, task.start);
+                  const durationYears = getYearsDiff(task.start, task.end);
+                  x = startYears * columnWidth.value;
+                  width = durationYears * columnWidth.value;
+                  break;
+                }
+                default:
+                  x = 0;
+                  width = 0;
+              }
+
+              return {
+                id: task.id,
+                x: Math.max(0, x),
+                width: Math.max(columnWidth.value / 2, width),
+              };
+            });
+
+            const taskRows = packTasksIntoRows(tasksWithPositions, barPadding.value);
+            const rowCount = Math.max(1, ...Array.from(taskRows.values()).map((r) => r + 1));
+            const swimlaneHeight = rowCount * (barHeight.value + barPadding.value);
+            
+            projectContentHeight += swimlaneHeight;
+          });
+        } else {
+          // Simple mode: use task count
+          projectContentHeight = taskCount * (barHeight.value + barPadding.value);
+        }
+        currentY += projectContentHeight;
+      }
+      
+      // Total height includes header + content
+      rendered.height = projectHeaderHeight + projectContentHeight;
+
+      result.push(rendered);
     });
+
+    return result;
   });
 
   /**

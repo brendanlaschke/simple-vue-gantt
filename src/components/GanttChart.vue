@@ -128,6 +128,30 @@
               :show-grid="showGrid"
             />
 
+            <!-- Project Group Backgrounds (shown when project grouping is enabled without swimlanes) -->
+            <g v-if="enableProjectGrouping" class="vue-gantt__project-backgrounds">
+              <ProjectGroupBackground
+                v-for="project in renderedProjects"
+                :key="`bg-${project.id}`"
+                :y="project.y"
+                :height="projectHeaderHeight"
+                :chart-width="chartWidth"
+                color="#f3f4f6"
+              />
+            </g>
+
+            <!-- Swimlane Backgrounds (shown when swimlanes are enabled, with or without projects) -->
+            <g v-if="enableSwimlanes" class="vue-gantt__swimlane-backgrounds">
+              <SwimlaneBackground
+                v-for="swimlane in renderedSwimlanes"
+                :key="`bg-${swimlane.id}`"
+                :y="swimlane.y"
+                :height="swimlane.height"
+                :chart-width="chartWidth"
+                :color="swimlane.color || '#ffffff'"
+              />
+            </g>
+
             <!-- Today Indicator -->
             <TodayIndicator
               :today-x="todayX"
@@ -135,6 +159,19 @@
               :today-color="todayColor"
               :show-today="showToday"
             />
+
+            <!-- Project Summary Bars -->
+            <g v-if="enableProjectGrouping && showProjectSummary" class="vue-gantt__project-summaries">
+              <ProjectSummaryBar
+                v-for="project in renderedProjects"
+                :key="`summary-${project.id}`"
+                :x="project.x || 0"
+                :y="project.y"
+                :width="project.width || 0"
+                :height="projectHeaderHeight"
+                :bar-height="6"
+              />
+            </g>
 
             <!-- Task Bars -->
             <g class="vue-gantt__bars">
@@ -148,7 +185,7 @@
                 :view-mode="options.viewMode || 'day'"
                 :edit-duration="options.editDuration"
                 :edit-position="options.editPosition"
-                :show-task-name="showTaskNameInBar || enableSwimlanes"
+                :show-progress="showTaskProgress"
                 @update:task="handleTaskUpdate"
               />
             </g>
@@ -192,6 +229,9 @@ import DependencyArrows from './DependencyArrows.vue'
 import TaskName from './TaskName.vue'
 import ProjectHeader from './ProjectHeader.vue'
 import SwimlaneLabel from './SwimlaneLabel.vue'
+import ProjectSummaryBar from './ProjectSummaryBar.vue'
+import ProjectGroupBackground from './ProjectGroupBackground.vue'
+import SwimlaneBackground from './SwimlaneBackground.vue'
 import { createRectangularPath } from '../utils/rectangularEdge'
 
 const props = withDefaults(defineProps<{
@@ -250,7 +290,8 @@ const projectHeaderHeight = computed(() => options.value.projectHeaderHeight || 
 const milestoneSize = computed(() => options.value.milestoneSize || 16)
 const showMilestoneLabels = computed(() => options.value.showMilestoneLabels !== false)
 const hideOrphanDependencies = computed(() => options.value.hideOrphanDependencies !== false)
-const showTaskNameInBar = computed(() => options.value.showTaskNameInBar || false)
+const showProjectSummary = computed(() => options.value.showProjectSummary !== false)
+const showTaskProgress = computed(() => options.value.showTaskProgress || false)
 
 // Handle task updates from drag operations
 const handleTaskUpdate = (taskId: string, updates: { start?: Date; end?: Date }) => {

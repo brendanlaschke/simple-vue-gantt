@@ -750,7 +750,6 @@ export const WithSwimlanes: Story = {
     options: {
       viewMode: "day",
       enableSwimlanes: true,
-      showTaskNameInBar: true,
     },
   },
   parameters: {
@@ -903,7 +902,6 @@ export const WithProjectsAndSwimlanes: Story = {
       viewMode: "day",
       enableProjectGrouping: true,
       enableSwimlanes: true,
-      showTaskNameInBar: true,
     },
   },
   parameters: {
@@ -1001,7 +999,6 @@ export const SwimlanesWithOverlappingTasks: Story = {
     options: {
       viewMode: "day",
       enableSwimlanes: true,
-      showTaskNameInBar: true,
       barHeight: 30,
       barPadding: 8,
     },
