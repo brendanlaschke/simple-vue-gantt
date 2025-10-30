@@ -1,0 +1,10 @@
+{
+  "indentWidth": 2,
+  "useTabs": false,
+  "lineWidth": 100,
+  "indentStyle": "space",
+  "semicolons": false,
+  "trailingComma": "es5",
+  "bracketSpacing": true,
+  "arrowParens": "always"
+}

@@ -1,0 +1,610 @@
+import type { Meta, StoryObj } from "@storybook/vue3";
+import GanttChart from "../components/GanttChart.vue";
+import type { GanttTask, GanttMilestone, GanttProject } from "../types";
+
+const meta: Meta<typeof GanttChart> = {
+  title: "Components/GanttChart",
+  component: GanttChart,
+  tags: ["autodocs"],
+  argTypes: {
+    tasks: {
+      description: "Array of tasks to display in the Gantt chart",
+      control: "object",
+    },
+    options: {
+      description: "Configuration options for the Gantt chart",
+      control: "object",
+    },
+  },
+};
+
+export default meta;
+type Story = StoryObj<typeof GanttChart>;
+
+// Sample tasks for reuse
+const sampleTasks: GanttTask[] = [
+  {
+    id: "1",
+    name: "Project Planning",
+    start: new Date("2024-10-01"),
+    end: new Date("2024-10-15"),
+    progress: 100,
+    color: "#10b981",
+  },
+  {
+    id: "2",
+    name: "Requirements Analysis",
+    start: new Date("2024-10-10"),
+    end: new Date("2024-10-25"),
+    progress: 100,
+    dependencies: ["1"],
+    color: "#3b82f6",
+  },
+  {
+    id: "3",
+    name: "UI/UX Design",
+    start: new Date("2024-10-20"),
+    end: new Date("2024-11-10"),
+    progress: 75,
+    dependencies: ["2"],
+    color: "#8b5cf6",
+  },
+  {
+    id: "4",
+    name: "Frontend Development",
+    start: new Date("2024-11-01"),
+    end: new Date("2024-12-15"),
+    progress: 45,
+    dependencies: ["3"],
+    color: "#f59e0b",
+  },
+  {
+    id: "5",
+    name: "Backend Development",
+    start: new Date("2024-11-05"),
+    end: new Date("2024-12-20"),
+    progress: 40,
+    dependencies: ["2"],
+    color: "#ef4444",
+  },
+  {
+    id: "6",
+    name: "Integration Testing",
+    start: new Date("2024-12-10"),
+    end: new Date("2024-12-28"),
+    progress: 20,
+    dependencies: ["4", "5"],
+    color: "#06b6d4",
+  },
+];
+
+// Default story
+export const Default: Story = {
+  args: {
+    tasks: sampleTasks,
+    options: {
+      viewMode: "day",
+      barHeight: 30,
+      columnWidth: 40,
+      showGrid: true,
+      showToday: true,
+      showDependencies: true,
+    },
+  },
+};
+
+// Day view
+export const DayView: Story = {
+  args: {
+    tasks: sampleTasks,
+    options: {
+      viewMode: "day",
+      barHeight: 30,
+      columnWidth: 40,
+    },
+  },
+};
+
+// Week view
+export const WeekView: Story = {
+  args: {
+    tasks: sampleTasks,
+    options: {
+      viewMode: "week",
+      barHeight: 30,
+      columnWidth: 50,
+    },
+  },
+};
+
+// Month view
+export const MonthView: Story = {
+  args: {
+    tasks: sampleTasks,
+    options: {
+      viewMode: "month",
+      barHeight: 30,
+      columnWidth: 60,
+    },
+  },
+};
+
+// Hour view
+export const HourView: Story = {
+  args: {
+    tasks: [
+      {
+        id: "1",
+        name: "Morning Meeting",
+        start: new Date("2024-10-27T09:00:00"),
+        end: new Date("2024-10-27T10:30:00"),
+        progress: 100,
+        color: "#10b981",
+      },
+      {
+        id: "2",
+        name: "Development Sprint",
+        start: new Date("2024-10-27T10:30:00"),
+        end: new Date("2024-10-27T16:00:00"),
+        progress: 60,
+        color: "#3b82f6",
+      },
+      {
+        id: "3",
+        name: "Code Review",
+        start: new Date("2024-10-27T16:00:00"),
+        end: new Date("2024-10-27T17:30:00"),
+        progress: 30,
+        color: "#8b5cf6",
+      },
+    ],
+    options: {
+      viewMode: "hour",
+      barHeight: 30,
+      columnWidth: 60,
+    },
+  },
+};
+
+// Year view
+export const YearView: Story = {
+  args: {
+    tasks: [
+      {
+        id: "1",
+        name: "Phase 1: Research",
+        start: new Date("2024-01-01"),
+        end: new Date("2025-06-30"),
+        progress: 100,
+        color: "#10b981",
+      },
+      {
+        id: "2",
+        name: "Phase 2: Development",
+        start: new Date("2025-03-01"),
+        end: new Date("2026-12-31"),
+        progress: 45,
+        color: "#3b82f6",
+      },
+      {
+        id: "3",
+        name: "Phase 3: Deployment",
+        start: new Date("2026-06-01"),
+        end: new Date("2027-12-31"),
+        progress: 0,
+        color: "#8b5cf6",
+      },
+    ],
+    options: {
+      viewMode: "year",
+      barHeight: 30,
+      columnWidth: 80,
+    },
+  },
+};
+
+// Without dependencies
+export const WithoutDependencies: Story = {
+  args: {
+    tasks: sampleTasks,
+    options: {
+      viewMode: "day",
+      showDependencies: false,
+    },
+  },
+};
+
+// Without grid
+export const WithoutGrid: Story = {
+  args: {
+    tasks: sampleTasks,
+    options: {
+      viewMode: "day",
+      showGrid: false,
+    },
+  },
+};
+
+// Large bars
+export const LargeBars: Story = {
+  args: {
+    tasks: sampleTasks,
+    options: {
+      viewMode: "day",
+      barHeight: 50,
+      columnWidth: 60,
+      barPadding: 10,
+    },
+  },
+};
+
+// Small bars
+export const SmallBars: Story = {
+  args: {
+    tasks: sampleTasks,
+    options: {
+      viewMode: "day",
+      barHeight: 20,
+      columnWidth: 30,
+      barPadding: 2,
+    },
+  },
+};
+
+// Simple project
+export const SimpleProject: Story = {
+  args: {
+    tasks: [
+      {
+        id: "1",
+        name: "Task 1",
+        start: new Date("2024-11-01"),
+        end: new Date("2024-11-05"),
+        progress: 100,
+        color: "#10b981",
+      },
+      {
+        id: "2",
+        name: "Task 2",
+        start: new Date("2024-11-03"),
+        end: new Date("2024-11-08"),
+        progress: 75,
+        color: "#3b82f6",
+      },
+      {
+        id: "3",
+        name: "Task 3",
+        start: new Date("2024-11-06"),
+        end: new Date("2024-11-12"),
+        progress: 30,
+        color: "#f59e0b",
+      },
+    ],
+    options: {
+      viewMode: "day",
+    },
+  },
+};
+
+// Long project
+export const LongProject: Story = {
+  args: {
+    tasks: [
+      {
+        id: "1",
+        name: "Phase 1",
+        start: new Date("2024-01-01"),
+        end: new Date("2024-03-31"),
+        progress: 100,
+        color: "#10b981",
+      },
+      {
+        id: "2",
+        name: "Phase 2",
+        start: new Date("2024-03-01"),
+        end: new Date("2024-06-30"),
+        progress: 80,
+        dependencies: ["1"],
+        color: "#3b82f6",
+      },
+      {
+        id: "3",
+        name: "Phase 3",
+        start: new Date("2024-06-01"),
+        end: new Date("2024-09-30"),
+        progress: 50,
+        dependencies: ["2"],
+        color: "#f59e0b",
+      },
+      {
+        id: "4",
+        name: "Phase 4",
+        start: new Date("2024-09-01"),
+        end: new Date("2024-12-31"),
+        progress: 20,
+        dependencies: ["3"],
+        color: "#ef4444",
+      },
+    ],
+    options: {
+      viewMode: "month",
+    },
+  },
+};
+
+// Custom colors
+export const CustomColors: Story = {
+  args: {
+    tasks: sampleTasks,
+    options: {
+      viewMode: "day",
+      gridColor: "#cbd5e1",
+      todayColor: "#22c55e",
+    },
+  },
+};
+
+// No progress
+export const NoProgress: Story = {
+  args: {
+    tasks: sampleTasks.map((task) => ({ ...task, progress: 0 })),
+    options: {
+      viewMode: "day",
+    },
+  },
+};
+
+// Full progress
+export const FullProgress: Story = {
+  args: {
+    tasks: sampleTasks.map((task) => ({ ...task, progress: 100 })),
+    options: {
+      viewMode: "day",
+    },
+  },
+};
+
+// With Project Grouping
+const projectTasks: GanttTask[] = [
+  {
+    id: "1",
+    name: "Planning Phase",
+    start: new Date("2024-10-01"),
+    end: new Date("2024-10-15"),
+    progress: 100,
+    color: "#10b981",
+    projectId: "project-1",
+  },
+  {
+    id: "2",
+    name: "Requirements Gathering",
+    start: new Date("2024-10-05"),
+    end: new Date("2024-10-20"),
+    progress: 100,
+    color: "#10b981",
+    projectId: "project-1",
+  },
+  {
+    id: "3",
+    name: "Frontend Setup",
+    start: new Date("2024-10-15"),
+    end: new Date("2024-11-01"),
+    progress: 80,
+    color: "#3b82f6",
+    projectId: "project-2",
+  },
+  {
+    id: "4",
+    name: "Component Development",
+    start: new Date("2024-10-25"),
+    end: new Date("2024-11-20"),
+    progress: 60,
+    color: "#3b82f6",
+    projectId: "project-2",
+  },
+  {
+    id: "5",
+    name: "Styling",
+    start: new Date("2024-11-05"),
+    end: new Date("2024-11-25"),
+    progress: 40,
+    color: "#3b82f6",
+    projectId: "project-2",
+  },
+  {
+    id: "6",
+    name: "API Design",
+    start: new Date("2024-10-20"),
+    end: new Date("2024-11-05"),
+    progress: 90,
+    color: "#f59e0b",
+    projectId: "project-3",
+  },
+  {
+    id: "7",
+    name: "Database Schema",
+    start: new Date("2024-10-25"),
+    end: new Date("2024-11-10"),
+    progress: 75,
+    color: "#f59e0b",
+    projectId: "project-3",
+  },
+  {
+    id: "8",
+    name: "Implementation",
+    start: new Date("2024-11-01"),
+    end: new Date("2024-12-01"),
+    progress: 50,
+    color: "#f59e0b",
+    projectId: "project-3",
+  },
+];
+
+const projects: GanttProject[] = [
+  {
+    id: "project-1",
+    name: "Planning & Requirements",
+    color: "#10b981",
+  },
+  {
+    id: "project-2",
+    name: "Frontend Development",
+    color: "#3b82f6",
+  },
+  {
+    id: "project-3",
+    name: "Backend Development",
+    color: "#f59e0b",
+  },
+];
+
+export const WithProjectGrouping: Story = {
+  args: {
+    tasks: projectTasks,
+    projects: projects,
+    options: {
+      viewMode: "day",
+      enableProjectGrouping: true,
+    },
+  },
+};
+
+// With Milestones
+const milestoneTasks: GanttTask[] = [
+  {
+    id: "1",
+    name: "Project Kickoff",
+    start: new Date("2024-10-01"),
+    end: new Date("2024-10-05"),
+    progress: 100,
+    color: "#10b981",
+  },
+  {
+    id: "2",
+    name: "Design Phase",
+    start: new Date("2024-10-06"),
+    end: new Date("2024-10-20"),
+    progress: 100,
+    color: "#3b82f6",
+  },
+  {
+    id: "3",
+    name: "Development Sprint 1",
+    start: new Date("2024-10-21"),
+    end: new Date("2024-11-10"),
+    progress: 80,
+    color: "#8b5cf6",
+  },
+  {
+    id: "4",
+    name: "Development Sprint 2",
+    start: new Date("2024-11-11"),
+    end: new Date("2024-12-01"),
+    progress: 60,
+    color: "#8b5cf6",
+  },
+  {
+    id: "5",
+    name: "Testing & QA",
+    start: new Date("2024-12-02"),
+    end: new Date("2024-12-20"),
+    progress: 40,
+    color: "#f59e0b",
+  },
+];
+
+const milestones: GanttMilestone[] = [
+  {
+    id: "m1",
+    name: "Design Complete",
+    date: new Date("2024-10-20"),
+    color: "#3b82f6",
+    dependencies: ["2"], // Depends on Design Phase task
+  },
+  {
+    id: "m2",
+    name: "MVP Ready",
+    date: new Date("2024-11-10"),
+    color: "#8b5cf6",
+    dependencies: ["3"], // Depends on Development Sprint 1
+  },
+  {
+    id: "m3",
+    name: "Beta Release",
+    date: new Date("2024-12-01"),
+    color: "#8b5cf6",
+    dependencies: ["m2"], // Depends on MVP Ready milestone
+  },
+  {
+    id: "m4",
+    name: "Launch",
+    date: new Date("2024-12-20"),
+    color: "#ef4444",
+    dependencies: ["5", "m3"], // Depends on Testing & QA task and Beta Release milestone
+  },
+];
+
+export const WithMilestones: Story = {
+  args: {
+    tasks: milestoneTasks,
+    milestones: milestones,
+    options: {
+      viewMode: "day",
+      showMilestoneLabels: true,
+      showDependencies: true,
+    },
+  },
+};
+
+// Generate 1000 tasks for performance testing
+const generate1000Tasks = (): GanttTask[] => {
+  const tasks: GanttTask[] = [];
+  const colors = ["#3b82f6", "#10b981", "#8b5cf6", "#f59e0b", "#ef4444", "#06b6d4", "#ec4899", "#14b8a6"];
+  const startDate = new Date("2024-01-01");
+  
+  for (let i = 0; i < 1000; i++) {
+    // Distribute tasks across 12 months
+    const monthOffset = Math.floor(i / 84); // ~84 tasks per month
+    const dayOffset = (i % 84) * 3; // Each task starts 3 days after the previous in its month
+    
+    const taskStart = new Date(startDate);
+    taskStart.setMonth(startDate.getMonth() + monthOffset);
+    taskStart.setDate(startDate.getDate() + dayOffset);
+    
+    const taskEnd = new Date(taskStart);
+    taskEnd.setDate(taskStart.getDate() + Math.floor(Math.random() * 14) + 3); // 3-17 days duration
+    
+    tasks.push({
+      id: `task-${i + 1}`,
+      name: `Task ${i + 1}`,
+      start: taskStart,
+      end: taskEnd,
+      progress: Math.floor(Math.random() * 101), // 0-100
+      color: colors[i % colors.length],
+    });
+  }
+  
+  return tasks;
+};
+
+export const Performance1000Tasks: Story = {
+  args: {
+    tasks: generate1000Tasks(),
+    options: {
+      viewMode: "month",
+      barHeight: 25,
+      columnWidth: 60,
+      showGrid: true,
+      showToday: true,
+      showDependencies: false, // Disable for better performance with many tasks
+      barPadding: 2,
+    },
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: 'Performance test with 1000 tasks. Dependencies are disabled for better rendering performance.',
+      },
+    },
+  },
+};

@@ -1,0 +1,18 @@
+{
+  "rules": {
+    "typescript/no-explicit-any": "warn",
+    "react/jsx-key": "off",
+    "unicorn/filename-case": "off"
+  },
+  "env": {
+    "browser": true,
+    "node": true,
+    "es2021": true
+  },
+  "globals": {
+    "defineProps": "readonly",
+    "defineEmits": "readonly",
+    "defineExpose": "readonly",
+    "withDefaults": "readonly"
+  }
+}
