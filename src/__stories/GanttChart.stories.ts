@@ -1,6 +1,11 @@
 import type { Meta, StoryObj } from "@storybook/vue3";
 import GanttChart from "../components/GanttChart.vue";
-import type { GanttTask, GanttMilestone, GanttProject, GanttSwimlane } from "../types";
+import type {
+  GanttTask,
+  GanttMilestone,
+  GanttProject,
+  GanttSwimlane,
+} from "../types";
 
 const meta: Meta<typeof GanttChart> = {
   title: "Components/GanttChart",
@@ -556,21 +561,30 @@ export const WithMilestones: Story = {
 // Generate 1000 tasks for performance testing
 const generate1000Tasks = (): GanttTask[] => {
   const tasks: GanttTask[] = [];
-  const colors = ["#3b82f6", "#10b981", "#8b5cf6", "#f59e0b", "#ef4444", "#06b6d4", "#ec4899", "#14b8a6"];
+  const colors = [
+    "#3b82f6",
+    "#10b981",
+    "#8b5cf6",
+    "#f59e0b",
+    "#ef4444",
+    "#06b6d4",
+    "#ec4899",
+    "#14b8a6",
+  ];
   const startDate = new Date("2024-01-01");
-  
+
   for (let i = 0; i < 1000; i++) {
     // Distribute tasks across 12 months
     const monthOffset = Math.floor(i / 84); // ~84 tasks per month
     const dayOffset = (i % 84) * 3; // Each task starts 3 days after the previous in its month
-    
+
     const taskStart = new Date(startDate);
     taskStart.setMonth(startDate.getMonth() + monthOffset);
     taskStart.setDate(startDate.getDate() + dayOffset);
-    
+
     const taskEnd = new Date(taskStart);
     taskEnd.setDate(taskStart.getDate() + Math.floor(Math.random() * 14) + 3); // 3-17 days duration
-    
+
     tasks.push({
       id: `task-${i + 1}`,
       name: `Task ${i + 1}`,
@@ -580,7 +594,7 @@ const generate1000Tasks = (): GanttTask[] => {
       color: colors[i % colors.length],
     });
   }
-  
+
   return tasks;
 };
 
@@ -600,7 +614,8 @@ export const Performance1000Tasks: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'Performance test with 1000 tasks. Dependencies are disabled for better rendering performance.',
+        story:
+          "Performance test with 1000 tasks. Dependencies are disabled for better rendering performance.",
       },
     },
   },
@@ -741,7 +756,8 @@ export const WithSwimlanes: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'Tasks organized in swim lanes. Multiple tasks can appear in the same lane if they don\'t overlap. Task names are shown inside the bars.',
+        story:
+          "Tasks organized in swim lanes. Multiple tasks can appear in the same lane if they don't overlap. Task names are shown inside the bars.",
       },
     },
   },
@@ -893,7 +909,8 @@ export const WithProjectsAndSwimlanes: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'Tasks organized by both projects and swim lanes. Projects can be collapsed/expanded. Within each project, tasks are grouped by swim lanes with automatic row packing.',
+        story:
+          "Tasks organized by both projects and swim lanes. Projects can be collapsed/expanded. Within each project, tasks are grouped by swim lanes with automatic row packing.",
       },
     },
   },
@@ -992,7 +1009,8 @@ export const SwimlanesWithOverlappingTasks: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'Demonstrates automatic task packing in swim lanes. Team A has overlapping tasks that are packed into multiple rows, while Team B has sequential tasks in a single row.',
+        story:
+          "Demonstrates automatic task packing in swim lanes. Team A has overlapping tasks that are packed into multiple rows, while Team B has sequential tasks in a single row.",
       },
     },
   },
