@@ -240,27 +240,22 @@ const projects = ref<GanttProject[]>([
   {
     id: 'planning',
     name: 'Planning & Requirements',
-    color: '#10b981'
   },
   {
     id: 'design',
     name: 'Design Phase',
-    color: '#8b5cf6'
   },
   {
     id: 'development',
     name: 'Development Phase',
-    color: '#3b82f6'
   },
   {
     id: 'testing',
     name: 'Testing Phase',
-    color: '#f59e0b'
   },
   {
     id: 'deployment',
     name: 'Deployment Phase',
-    color: '#14b8a6'
   }
 ])
 

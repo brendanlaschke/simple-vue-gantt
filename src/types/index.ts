@@ -54,8 +54,6 @@ export interface GanttProject {
   id: string;
   /** Display name of the project */
   name: string;
-  /** Optional custom color for the project */
-  color?: string;
   /** Optional metadata that can be attached to the project */
   metadata?: Record<string, unknown>;
 }

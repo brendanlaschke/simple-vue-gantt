@@ -444,17 +444,14 @@ const projects: GanttProject[] = [
   {
     id: "project-1",
     name: "Planning & Requirements",
-    color: "#10b981",
   },
   {
     id: "project-2",
     name: "Frontend Development",
-    color: "#3b82f6",
   },
   {
     id: "project-3",
     name: "Backend Development",
-    color: "#f59e0b",
   },
 ];
 
