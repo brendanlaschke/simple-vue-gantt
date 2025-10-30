@@ -203,7 +203,10 @@ export function useGanttChart(
             break;
           }
           case "month": {
-            const startMonths = getMonthsDiff(chartStartDate.value, projectStart);
+            const startMonths = getMonthsDiff(
+              chartStartDate.value,
+              projectStart
+            );
             const durationMonths = getMonthsDiff(projectStart, projectEnd);
             projectX = startMonths * columnWidth.value;
             projectWidth = durationMonths * columnWidth.value;
@@ -239,7 +242,7 @@ export function useGanttChart(
 
       const projectHeaderHeight = mergedOptions.value.projectHeaderHeight;
       currentY += projectHeaderHeight;
-      
+
       let projectContentHeight = 0;
       if (isExpanded) {
         // When swimlanes are enabled, calculate height based on swimlane packing
@@ -261,7 +264,10 @@ export function useGanttChart(
 
               switch (viewMode.value) {
                 case "hour": {
-                  const startHours = getHoursDiff(chartStartDate.value, task.start);
+                  const startHours = getHoursDiff(
+                    chartStartDate.value,
+                    task.start
+                  );
                   const durationHours = getHoursDiff(task.start, task.end);
                   x = startHours * columnWidth.value;
                   width = durationHours * columnWidth.value;
@@ -276,14 +282,20 @@ export function useGanttChart(
                   width = (duration / 7) * columnWidth.value;
                   break;
                 case "month": {
-                  const startMonths = getMonthsDiff(chartStartDate.value, task.start);
+                  const startMonths = getMonthsDiff(
+                    chartStartDate.value,
+                    task.start
+                  );
                   const durationMonths = getMonthsDiff(task.start, task.end);
                   x = startMonths * columnWidth.value;
                   width = durationMonths * columnWidth.value;
                   break;
                 }
                 case "year": {
-                  const startYears = getYearsDiff(chartStartDate.value, task.start);
+                  const startYears = getYearsDiff(
+                    chartStartDate.value,
+                    task.start
+                  );
                   const durationYears = getYearsDiff(task.start, task.end);
                   x = startYears * columnWidth.value;
                   width = durationYears * columnWidth.value;
@@ -301,19 +313,27 @@ export function useGanttChart(
               };
             });
 
-            const taskRows = packTasksIntoRows(tasksWithPositions, barPadding.value);
-            const rowCount = Math.max(1, ...Array.from(taskRows.values()).map((r) => r + 1));
-            const swimlaneHeight = rowCount * (barHeight.value + barPadding.value);
-            
+            const taskRows = packTasksIntoRows(
+              tasksWithPositions,
+              barPadding.value
+            );
+            const rowCount = Math.max(
+              1,
+              ...Array.from(taskRows.values()).map((r) => r + 1)
+            );
+            const swimlaneHeight =
+              rowCount * (barHeight.value + barPadding.value);
+
             projectContentHeight += swimlaneHeight;
           });
         } else {
           // Simple mode: use task count
-          projectContentHeight = taskCount * (barHeight.value + barPadding.value);
+          projectContentHeight =
+            taskCount * (barHeight.value + barPadding.value);
         }
         currentY += projectContentHeight;
       }
-      
+
       // Total height includes header + content
       rendered.height = projectHeaderHeight + projectContentHeight;
 

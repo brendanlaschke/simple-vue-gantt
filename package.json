@@ -35,7 +35,7 @@
     "project-management",
     "typescript"
   ],
-  "author": "Leitart",
+  "author": "Brendan Laschke",
   "license": "MIT",
   "peerDependencies": {
     "vue": "^3.5.22"
