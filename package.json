@@ -1,5 +1,5 @@
 {
-  "name": "@leitart/vue-gantt",
+  "name": "@brendanlaschke/vue-simple-gantt",
   "version": "0.1.0",
   "description": "A flexible Gantt chart library for Vue 3 with TypeScript",
   "type": "module",
