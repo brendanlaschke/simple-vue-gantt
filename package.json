@@ -2,6 +2,10 @@
   "name": "@brendanlaschke/vue-simple-gantt",
   "version": "0.1.0",
   "description": "A flexible Gantt chart library for Vue 3 with TypeScript",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/brendanlaschke/simple-vue-gantt.git"
+  },
   "type": "module",
   "main": "./dist/vue-gantt.umd.cjs",
   "module": "./dist/vue-gantt.js",
