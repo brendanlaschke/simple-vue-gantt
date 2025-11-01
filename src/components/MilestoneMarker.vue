@@ -1,5 +1,5 @@
 <template>
-  <g class="milestone-group">
+  <g class="milestone-group" @click="handleClick">
     <!-- Milestone Diamond -->
     <path
       :d="getMilestonePath(milestone.x, milestone.y + barHeight / 2)"
@@ -38,6 +38,14 @@ interface Props {
 const props = withDefaults(defineProps<Props>(), {
   showLabel: true
 })
+
+const emit = defineEmits<{
+  'click': [event: MouseEvent, milestoneId: string]
+}>()
+
+const handleClick = (event: MouseEvent) => {
+  emit('click', event, props.milestone.id)
+}
 
 const getMilestonePath = (x: number, y: number) => {
   const halfSize = props.milestoneSize / 2

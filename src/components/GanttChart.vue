@@ -165,11 +165,13 @@
               <ProjectSummaryBar
                 v-for="project in renderedProjects"
                 :key="`summary-${project.id}`"
+                :project-id="project.id"
                 :x="project.x || 0"
                 :y="project.y"
                 :width="project.width || 0"
                 :height="projectHeaderHeight"
-                :bar-height="6"
+                :bar-height="projectHeaderHeight / 4 * 3"
+                @click="handleSummaryClick"
               />
             </g>
 
@@ -187,6 +189,7 @@
                 :edit-position="options.editPosition"
                 :show-progress="showTaskProgress"
                 @update:task="handleTaskUpdate"
+                @click="handleTaskClick"
               />
             </g>
 
@@ -199,6 +202,7 @@
                 :bar-height="barHeight"
                 :milestone-size="milestoneSize"
                 :show-label="showMilestoneLabels"
+                @click="handleMilestoneClick"
               />
             </g>
 
@@ -252,6 +256,7 @@ const emit = defineEmits<{
   'task:update': [taskId: string, updates: { start?: Date; end?: Date }]
   'task:move': [taskId: string, start: Date, end: Date]
   'task:resize': [taskId: string, start: Date, end: Date]
+  'click': [event: MouseEvent, type: 'task' | 'milestone' | 'summary', data: GanttTask | GanttMilestone | GanttProject]
 }>()
 
 const { tasks, milestones, projects, swimlanes, options } = toRefs(props)
@@ -325,6 +330,30 @@ const handleTaskUpdate = (taskId: string, updates: { start?: Date; end?: Date })
   } else if (updates.start || updates.end) {
     // Only one changed - this is a resize operation
     emit('task:resize', taskId, updatedTask.start, updatedTask.end)
+  }
+}
+
+// Handle click events on tasks
+const handleTaskClick = (event: MouseEvent, taskId: string) => {
+  const task = tasks.value.find(t => t.id === taskId)
+  if (task) {
+    emit('click', event, 'task', task)
+  }
+}
+
+// Handle click events on milestones
+const handleMilestoneClick = (event: MouseEvent, milestoneId: string) => {
+  const milestone = milestones.value.find(m => m.id === milestoneId)
+  if (milestone) {
+    emit('click', event, 'milestone', milestone)
+  }
+}
+
+// Handle click events on project summary bars
+const handleSummaryClick = (event: MouseEvent, projectId: string) => {
+  const project = projects.value.find(p => p.id === projectId)
+  if (project) {
+    emit('click', event, 'summary', project)
   }
 }
 

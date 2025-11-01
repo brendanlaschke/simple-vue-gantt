@@ -17,6 +17,7 @@
       rx="4"
       class="task-bar-group__background"
       @mousedown="startDrag($event, 'move')"
+      @click="handleClick"
     />
     
     <!-- Task Progress -->
@@ -29,6 +30,7 @@
       rx="4"
       class="task-bar-group__progress"
       @mousedown="startDrag($event, 'move')"
+      @click="handleClick"
     />
 
     <!-- Task Label -->
@@ -94,6 +96,7 @@ const props = withDefaults(defineProps<Props>(), {
 
 const emit = defineEmits<{
   'update:task': [taskId: string, updates: { start?: Date; end?: Date }]
+  'click': [event: MouseEvent, taskId: string]
 }>()
 
 const isDragging = ref(false)
@@ -104,6 +107,12 @@ const tempWidth = ref(0)
 
 const displayX = computed(() => isDragging.value ? tempX.value : props.task.x)
 const displayWidth = computed(() => isDragging.value ? tempWidth.value : props.task.width)
+
+const handleClick = (event: MouseEvent) => {
+  // Don't emit click if we're dragging
+  if (isDragging.value) return
+  emit('click', event, props.task.id)
+}
 
 const startDrag = (event: MouseEvent, type: 'move' | 'resize-left' | 'resize-right') => {
   // Check permissions based on drag type

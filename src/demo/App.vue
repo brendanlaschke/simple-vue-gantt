@@ -105,12 +105,14 @@
     <div class="chart-container">
       <GanttChart 
         v-model:tasks="tasks" 
+        :milestones="milestones"
         :projects="projects" 
         :swimlanes="swimlanes"
         :options="options" 
         @task:update="onTaskUpdate"
         @task:move="onTaskMove"
         @task:resize="onTaskResize"
+        @click="onClick"
       />
     </div>
 
@@ -132,7 +134,7 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import GanttChart from '../components/GanttChart.vue'
-import type { GanttTask, GanttProject, GanttSwimlane, GanttOptions, ViewMode } from '../types'
+import type { GanttTask, GanttProject, GanttSwimlane, GanttMilestone, GanttOptions, ViewMode } from '../types'
 
 // Sample tasks data with project IDs and swimlane IDs
 const tasks = ref<GanttTask[]>([
@@ -243,6 +245,40 @@ const tasks = ref<GanttTask[]>([
     projectId: 'testing',
     swimlaneId: 'team3'
   },
+])
+
+// Milestones data
+const milestones = ref<GanttMilestone[]>([
+  {
+    id: 'm1',
+    name: 'Requirements Complete',
+    date: new Date('2025-10-25'),
+    color: '#10b981',
+    projectId: 'planning'
+  },
+  {
+    id: 'm2',
+    name: 'Design Approved',
+    date: new Date('2025-11-10'),
+    color: '#8b5cf6',
+    projectId: 'design'
+  },
+  {
+    id: 'm3',
+    name: 'Beta Release',
+    date: new Date('2025-12-28'),
+    color: '#f59e0b',
+    projectId: 'testing',
+    dependencies: ['6']
+  },
+  {
+    id: 'm4',
+    name: 'Production Launch',
+    date: new Date('2026-01-15'),
+    color: '#14b8a6',
+    projectId: 'deployment',
+    dependencies: ['8']
+  }
 ])
 
 // Projects data
@@ -365,6 +401,36 @@ const onTaskResize = (taskId: string, start: Date, end: Date) => {
     time: new Date().toLocaleTimeString(),
     type: 'Task Resized',
     details: `${task.name} - ${formatDate(start)} to ${formatDate(end)}`
+  })
+  
+  // Keep only last 10 events
+  if (eventLog.value.length > 10) {
+    eventLog.value = eventLog.value.slice(0, 10)
+  }
+}
+
+const onClick = (_event: MouseEvent, type: 'task' | 'milestone' | 'summary', data: GanttTask | GanttMilestone | GanttProject) => {
+  let name = ''
+  let details = ''
+  
+  if (type === 'task') {
+    const task = data as GanttTask
+    name = task.name
+    details = `Progress: ${task.progress}%, ${formatDate(task.start)} - ${formatDate(task.end)}`
+  } else if (type === 'milestone') {
+    const milestone = data as GanttMilestone
+    name = milestone.name
+    details = `Date: ${formatDate(milestone.date)}`
+  } else if (type === 'summary') {
+    const project = data as GanttProject
+    name = project.name
+    details = 'Project Summary'
+  }
+  
+  eventLog.value.unshift({
+    time: new Date().toLocaleTimeString(),
+    type: `${type.charAt(0).toUpperCase() + type.slice(1)} Clicked`,
+    details: `${name} - ${details}`
   })
   
   // Keep only last 10 events
