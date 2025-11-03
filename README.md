@@ -15,7 +15,7 @@ npm i @brendanlaschke/vue-simple-gantt
 ```vue
 
 <script setup>
-import GanttChart from '@/components/GanttChart.vue'
+import { GanttChart } from '@brendanlaschke/vue-simple-gantt'
 import { ref } from 'vue'
 
 const options =  {

@@ -1,6 +1,6 @@
 {
   "name": "@brendanlaschke/vue-simple-gantt",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "A flexible Gantt chart library for Vue 3 with TypeScript",
   "repository": {
     "type": "git",
@@ -8,10 +8,14 @@
   },
   "type": "module",
   "main": "./dist/vue-gantt.umd.cjs",
-  "module": "./dist/vue-gantt.js",
   "types": "./dist/index.d.ts",
   "exports": {
-    "./style.css": "./dist/style.css"
+    "./style.css": "./dist/style.css",
+    ".": {
+      "require": "./dist/vue-gantt.umd.cjs",
+      "import": "./dist/vue-gantt.js",
+      "style": "./dist/vue-simple-gantt.css"
+    }
   },
   "files": [
     "dist"
@@ -61,5 +65,8 @@
     "vitest": "^4.0.5",
     "vue": "^3.5.22",
     "vue-tsc": "^3.1.2"
-  }
+  },
+  "sideEffects": [
+    "*.css"
+  ]
 }
