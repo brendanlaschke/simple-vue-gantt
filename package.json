@@ -1,6 +1,6 @@
 {
   "name": "@brendanlaschke/vue-simple-gantt",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "description": "A flexible Gantt chart library for Vue 3 with TypeScript",
   "repository": {
     "type": "git",
