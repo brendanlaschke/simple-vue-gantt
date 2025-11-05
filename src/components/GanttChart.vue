@@ -2,27 +2,47 @@
   <div class="vue-gantt">
     <div class="vue-gantt__container">
       <!-- Sidebar with Task Names -->
-      <GanttSidebar 
-        :title="enableSwimlanes && enableProjectGrouping ? 'Projects & Swim Lanes' : (enableSwimlanes ? 'Swim Lanes' : (enableProjectGrouping ? 'Projects & Tasks' : 'Tasks'))"
-        :use-two-row-headers="useTwoRowHeaders"
-      >
-        <!-- Project Grouping + Swim Lane Mode -->
-        <template v-if="enableSwimlanes && enableProjectGrouping">
-          <template v-for="project in renderedProjects" :key="project.id">
-            <!-- Project Header -->
-            <ProjectHeader
-              :name="project.name"
-              :height="projectHeaderHeight"
-              :top="project.y"
-              :is-expanded="project.isExpanded"
-              :task-count="project.taskCount"
-              @toggle="toggleProject(project.id)"
-            />
-            
-            <!-- Swimlanes within this project -->
-            <template v-if="project.isExpanded">
+      <div class="vue-gantt__sidebar-column">
+        <GanttSidebar 
+          :title="enableSwimlanes && enableProjectGrouping ? 'Projects & Swim Lanes' : (enableSwimlanes ? 'Swim Lanes' : (enableProjectGrouping ? 'Projects & Tasks' : 'Tasks'))"
+          :use-two-row-headers="useTwoRowHeaders"
+        />
+        <OverlayScrollbarsComponent
+          :options="{ scrollbars: { visibility: 'hidden' }, overflow: { x: 'hidden', y: 'scroll' } }"
+          ref="sidebarScrollRef"
+          class="vue-gantt__sidebar-scroll"
+          @os-scroll="handleSidebarScroll"
+        >
+          <div class="vue-gantt__sidebar-content" :style="{ height: `${chartHeight}px` }">
+            <!-- Project Grouping + Swim Lane Mode -->
+            <template v-if="enableSwimlanes && enableProjectGrouping">
+              <template v-for="project in renderedProjects" :key="project.id">
+                <!-- Project Header -->
+                <ProjectHeader
+                  :name="project.name"
+                  :height="projectHeaderHeight"
+                  :top="project.y"
+                  :is-expanded="project.isExpanded"
+                  :task-count="project.taskCount"
+                  @toggle="toggleProject(project.id)"
+                />
+                
+                <!-- Swimlanes within this project -->
+                <template v-if="project.isExpanded">
+                  <SwimlaneLabel
+                    v-for="swimlane in swimlanesForProject(project.id)"
+                    :key="swimlane.id"
+                    :name="swimlane.name"
+                    :height="swimlane.height"
+                    :top="swimlane.y"
+                    :color="swimlane.color"
+                  />
+                </template>
+              </template>
+
+              <!-- Orphan swimlanes (no project) -->
               <SwimlaneLabel
-                v-for="swimlane in swimlanesForProject(project.id)"
+                v-for="swimlane in orphanSwimlanes"
                 :key="swimlane.id"
                 :name="swimlane.name"
                 :height="swimlane.height"
@@ -30,199 +50,208 @@
                 :color="swimlane.color"
               />
             </template>
-          </template>
 
-          <!-- Orphan swimlanes (no project) -->
-          <SwimlaneLabel
-            v-for="swimlane in orphanSwimlanes"
-            :key="swimlane.id"
-            :name="swimlane.name"
-            :height="swimlane.height"
-            :top="swimlane.y"
-            :color="swimlane.color"
-          />
-        </template>
+            <!-- Swim Lane Mode (without project grouping) -->
+            <template v-else-if="enableSwimlanes">
+              <SwimlaneLabel
+                v-for="swimlane in renderedSwimlanes"
+                :key="swimlane.id"
+                :name="swimlane.name"
+                :height="swimlane.height"
+                :top="swimlane.y"
+                :color="swimlane.color"
+              />
+            </template>
 
-        <!-- Swim Lane Mode (without project grouping) -->
-        <template v-else-if="enableSwimlanes">
-          <SwimlaneLabel
-            v-for="swimlane in renderedSwimlanes"
-            :key="swimlane.id"
-            :name="swimlane.name"
-            :height="swimlane.height"
-            :top="swimlane.y"
-            :color="swimlane.color"
-          />
-        </template>
+            <!-- Project Grouping Mode (without swim lanes) -->
+            <template v-else-if="enableProjectGrouping">
+              <template v-for="project in renderedProjects" :key="project.id">
+                <!-- Project Header -->
+                <ProjectHeader
+                  :name="project.name"
+                  :height="projectHeaderHeight"
+                  :top="project.y"
+                  :is-expanded="project.isExpanded"
+                  :task-count="project.taskCount"
+                  @toggle="toggleProject(project.id)"
+                />
+                
+                <!-- Project Tasks -->
+                <template v-if="project.isExpanded">
+                  <TaskName
+                    v-for="task in tasksForProject(project.id)"
+                    :key="task.id"
+                    :name="task.name"
+                    :height="barHeight"
+                    :margin-bottom="barPadding"
+                    :is-grouped="true"
+                  />
+                </template>
+              </template>
 
-        <!-- Project Grouping Mode (without swim lanes) -->
-        <template v-else-if="enableProjectGrouping">
-          <template v-for="project in renderedProjects" :key="project.id">
-            <!-- Project Header -->
-            <ProjectHeader
-              :name="project.name"
-              :height="projectHeaderHeight"
-              :top="project.y"
-              :is-expanded="project.isExpanded"
-              :task-count="project.taskCount"
-              @toggle="toggleProject(project.id)"
-            />
-            
-            <!-- Project Tasks -->
-            <template v-if="project.isExpanded">
+              <!-- Orphan Tasks (no project) -->
               <TaskName
-                v-for="task in tasksForProject(project.id)"
+                v-for="task in orphanTasks"
                 :key="task.id"
                 :name="task.name"
                 :height="barHeight"
                 :margin-bottom="barPadding"
-                :is-grouped="true"
               />
             </template>
-          </template>
 
-          <!-- Orphan Tasks (no project) -->
-          <TaskName
-            v-for="task in orphanTasks"
-            :key="task.id"
-            :name="task.name"
-            :height="barHeight"
-            :margin-bottom="barPadding"
-          />
-        </template>
-
-        <!-- Simple Mode (No Grouping) -->
-        <template v-else>
-          <TaskName
-            v-for="task in tasks"
-            :key="task.id"
-            :name="task.name"
-            :height="barHeight"
-            :margin-bottom="barPadding"
-          />
-        </template>
-      </GanttSidebar>
+            <!-- Simple Mode (No Grouping) -->
+            <template v-else>
+              <TaskName
+                v-for="task in tasks"
+                :key="task.id"
+                :name="task.name"
+                :height="barHeight"
+                :margin-bottom="barPadding"
+              />
+            </template>
+          </div>
+        </OverlayScrollbarsComponent>
+      </div>
 
       <!-- Chart Area -->
-      <div class="vue-gantt__chart-container">
+      <div class="vue-gantt__chart-column">
         <!-- Timeline Header -->
-        <TimelineHeader
-          :columns="timeColumns"
-          :column-width="columnWidth"
-          :primary-periods="primaryPeriods"
-          :use-two-row-headers="useTwoRowHeaders"
-        />
-
-        <!-- Chart SVG -->
-        <div class="vue-gantt__chart" :style="{ width: `${chartWidth}px` }">
-          <svg
-            :width="chartWidth"
-            :height="chartHeight"
-            class="vue-gantt__svg"
-          >
-            <!-- Grid Lines -->
-            <GridLines
+        <OverlayScrollbarsComponent
+          :options="{ scrollbars: { visibility: 'hidden' }, overflow: { x: 'scroll', y: 'hidden' } }"
+          ref="headerScrollRef"
+          class="vue-gantt__header-wrapper"
+          @os-scroll="handleHeaderScroll"
+        >
+          <div :style="{ width: `${chartWidth}px` }">
+            <TimelineHeader
               :columns="timeColumns"
-              :chart-height="chartHeight"
-              :grid-color="gridColor"
-              :show-grid="showGrid"
+              :column-width="columnWidth"
+              :primary-periods="primaryPeriods"
+              :use-two-row-headers="useTwoRowHeaders"
             />
+          </div>
+        </OverlayScrollbarsComponent>
 
-            <!-- Project Group Backgrounds (shown when project grouping is enabled without swimlanes) -->
-            <g v-if="enableProjectGrouping" class="vue-gantt__project-backgrounds">
-              <ProjectGroupBackground
-                v-for="project in renderedProjects"
-                :key="`bg-${project.id}`"
-                :y="project.y"
-                :height="projectHeaderHeight"
-                :chart-width="chartWidth"
-                color="#f3f4f6"
+        <!-- Chart SVG with scroll wrapper -->
+        <OverlayScrollbarsComponent
+          :options="{ scrollbars: { autoHide: 'leave', autoHideDelay: 800 }, overflow: { x: 'scroll', y: 'scroll' } }"
+          ref="chartScrollRef"
+          class="vue-gantt__chart-scroll" 
+          @os-scroll="handleChartScroll"
+        >
+          <div class="vue-gantt__chart" :style="{ width: `${chartWidth}px`, height: `${chartHeight}px` }">
+            <svg
+              :width="chartWidth"
+              :height="chartHeight"
+              class="vue-gantt__svg"
+            >
+              <!-- Grid Lines -->
+              <GridLines
+                :columns="timeColumns"
+                :chart-height="chartHeight"
+                :grid-color="gridColor"
+                :show-grid="showGrid"
               />
-            </g>
 
-            <!-- Swimlane Backgrounds (shown when swimlanes are enabled, with or without projects) -->
-            <g v-if="enableSwimlanes" class="vue-gantt__swimlane-backgrounds">
-              <SwimlaneBackground
-                v-for="swimlane in renderedSwimlanes"
-                :key="`bg-${swimlane.id}`"
-                :y="swimlane.y"
-                :height="swimlane.height"
-                :chart-width="chartWidth"
-                :color="swimlane.color || '#ffffff'"
+              <!-- Project Group Backgrounds (shown when project grouping is enabled without swimlanes) -->
+              <g v-if="enableProjectGrouping" class="vue-gantt__project-backgrounds">
+                <ProjectGroupBackground
+                  v-for="project in renderedProjects"
+                  :key="`bg-${project.id}`"
+                  :y="project.y"
+                  :height="projectHeaderHeight"
+                  :chart-width="chartWidth"
+                  color="#f3f4f6"
+                />
+              </g>
+
+              <!-- Swimlane Backgrounds (shown when swimlanes are enabled, with or without projects) -->
+              <g v-if="enableSwimlanes" class="vue-gantt__swimlane-backgrounds">
+                <SwimlaneBackground
+                  v-for="swimlane in renderedSwimlanes"
+                  :key="`bg-${swimlane.id}`"
+                  :y="swimlane.y"
+                  :height="swimlane.height"
+                  :chart-width="chartWidth"
+                  :color="swimlane.color || '#ffffff'"
+                />
+              </g>
+
+              <!-- Today Indicator -->
+              <TodayIndicator
+                :today-x="todayX"
+                :chart-height="chartHeight"
+                :today-color="todayColor"
+                :show-today="showToday"
               />
-            </g>
 
-            <!-- Today Indicator -->
-            <TodayIndicator
-              :today-x="todayX"
-              :chart-height="chartHeight"
-              :today-color="todayColor"
-              :show-today="showToday"
-            />
+              <!-- Project Summary Bars -->
+              <g v-if="enableProjectGrouping && showProjectSummary" class="vue-gantt__project-summaries">
+                <ProjectSummaryBar
+                  v-for="project in renderedProjects"
+                  :key="`summary-${project.id}`"
+                  :project-id="project.id"
+                  :x="project.x || 0"
+                  :y="project.y"
+                  :width="project.width || 0"
+                  :height="projectHeaderHeight"
+                  :bar-height="projectHeaderHeight / 4 * 3"
+                  @click="handleSummaryClick"
+                />
+              </g>
 
-            <!-- Project Summary Bars -->
-            <g v-if="enableProjectGrouping && showProjectSummary" class="vue-gantt__project-summaries">
-              <ProjectSummaryBar
-                v-for="project in renderedProjects"
-                :key="`summary-${project.id}`"
-                :project-id="project.id"
-                :x="project.x || 0"
-                :y="project.y"
-                :width="project.width || 0"
-                :height="projectHeaderHeight"
-                :bar-height="projectHeaderHeight / 4 * 3"
-                @click="handleSummaryClick"
+              <!-- Task Bars -->
+              <g class="vue-gantt__bars">
+                <TaskBar
+                  v-for="task in visibleTasks"
+                  :key="task.id"
+                  :task="task"
+                  :bar-height="barHeight"
+                  :column-width="columnWidth"
+                  :chart-start-date="chartStartDate"
+                  :view-mode="options.viewMode || 'day'"
+                  :edit-duration="options.editDuration"
+                  :edit-position="options.editPosition"
+                  :show-progress="showTaskProgress"
+                  @update:task="handleTaskUpdate"
+                  @click="handleTaskClick"
+                />
+              </g>
+
+              <!-- Milestones -->
+              <g class="vue-gantt__milestones">
+                <MilestoneMarker
+                  v-for="milestone in visibleMilestones"
+                  :key="milestone.id"
+                  :milestone="milestone"
+                  :bar-height="barHeight"
+                  :milestone-size="milestoneSize"
+                  :show-label="showMilestoneLabels"
+                  @click="handleMilestoneClick"
+                />
+              </g>
+
+              <!-- Task Dependencies -->
+              <DependencyArrows
+                :arrows="dependencyArrows"
+                :show-dependencies="showDependencies"
               />
-            </g>
-
-            <!-- Task Bars -->
-            <g class="vue-gantt__bars">
-              <TaskBar
-                v-for="task in visibleTasks"
-                :key="task.id"
-                :task="task"
-                :bar-height="barHeight"
-                :column-width="columnWidth"
-                :chart-start-date="chartStartDate"
-                :view-mode="options.viewMode || 'day'"
-                :edit-duration="options.editDuration"
-                :edit-position="options.editPosition"
-                :show-progress="showTaskProgress"
-                @update:task="handleTaskUpdate"
-                @click="handleTaskClick"
-              />
-            </g>
-
-            <!-- Milestones -->
-            <g class="vue-gantt__milestones">
-              <MilestoneMarker
-                v-for="milestone in visibleMilestones"
-                :key="milestone.id"
-                :milestone="milestone"
-                :bar-height="barHeight"
-                :milestone-size="milestoneSize"
-                :show-label="showMilestoneLabels"
-                @click="handleMilestoneClick"
-              />
-            </g>
-
-            <!-- Task Dependencies -->
-            <DependencyArrows
-              :arrows="dependencyArrows"
-              :show-dependencies="showDependencies"
-            />
-          </svg>
-        </div>
+            </svg>
+          </div>
+        </OverlayScrollbarsComponent>
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { computed, toRefs } from 'vue'
+import { computed, toRefs, ref } from 'vue'
 import type { GanttTask, GanttMilestone, GanttProject, GanttSwimlane, GanttOptions } from '@/types'
 import { useGanttChart } from '@/composables/useGanttChart'
 import { getDaysDiff } from '@/utils/dateDifference'
+import { OverlayScrollbarsComponent } from 'overlayscrollbars-vue'
+import type { OverlayScrollbars } from 'overlayscrollbars'
+import 'overlayscrollbars/overlayscrollbars.css'
 import GanttSidebar from './GanttSidebar.vue'
 import TimelineHeader from './TimelineHeader.vue'
 import GridLines from './GridLines.vue'
@@ -564,28 +593,130 @@ const primaryPeriods = computed<PrimaryPeriod[]>(() => {
 
   return periods
 })
+
+// Refs for scroll synchronization
+const sidebarScrollRef = ref<InstanceType<typeof OverlayScrollbarsComponent> | null>(null)
+const chartScrollRef = ref<InstanceType<typeof OverlayScrollbarsComponent> | null>(null)
+const headerScrollRef = ref<InstanceType<typeof OverlayScrollbarsComponent> | null>(null)
+let isScrollingSidebar = false
+let isScrollingChart = false
+let isScrollingHeader = false
+
+// Handle sidebar scroll
+const handleSidebarScroll = (instance: OverlayScrollbars) => {
+  if (isScrollingChart) return
+  
+  const viewport = instance.elements().viewport
+  const scrollTop = viewport.scrollTop
+  const chartInstance = chartScrollRef.value?.osInstance()
+  
+  if (chartInstance) {
+    isScrollingSidebar = true
+    const chartViewport = chartInstance.elements().viewport
+    chartViewport.scrollTop = scrollTop
+    setTimeout(() => {
+      isScrollingSidebar = false
+    }, 0)
+  }
+}
+
+// Handle header scroll
+const handleHeaderScroll = (instance: OverlayScrollbars) => {
+  if (isScrollingChart) return
+  
+  const viewport = instance.elements().viewport
+  const scrollLeft = viewport.scrollLeft
+  const chartInstance = chartScrollRef.value?.osInstance()
+  
+  if (chartInstance) {
+    isScrollingHeader = true
+    const chartViewport = chartInstance.elements().viewport
+    chartViewport.scrollLeft = scrollLeft
+    setTimeout(() => {
+      isScrollingHeader = false
+    }, 0)
+  }
+}
+
+// Handle chart scroll
+const handleChartScroll = (instance: OverlayScrollbars) => {
+  const viewport = instance.elements().viewport
+  const scrollTop = viewport.scrollTop
+  const scrollLeft = viewport.scrollLeft
+  
+  const sidebarInstance = sidebarScrollRef.value?.osInstance()
+  const headerInstance = headerScrollRef.value?.osInstance()
+  
+  // Sync vertical scroll with sidebar
+  if (!isScrollingSidebar && sidebarInstance) {
+    isScrollingChart = true
+    const sidebarViewport = sidebarInstance.elements().viewport
+    sidebarViewport.scrollTop = scrollTop
+  }
+  
+  // Sync horizontal scroll with header
+  if (!isScrollingHeader && headerInstance) {
+    const headerViewport = headerInstance.elements().viewport
+    headerViewport.scrollLeft = scrollLeft
+  }
+  
+  setTimeout(() => {
+    isScrollingChart = false
+  }, 0)
+}
 </script>
 
 <style scoped>
 .vue-gantt {
   width: 100%;
-  overflow-x: auto;
-  overflow-y: hidden;
+  height: 100%;
+  overflow: hidden;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
 }
 
 .vue-gantt__container {
   display: flex;
-  min-width: min-content;
+  height: 100%;
 }
 
-.vue-gantt__chart-container {
-  flex: 1;
+.vue-gantt__sidebar-column {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
   overflow: hidden;
+}
+
+.vue-gantt__sidebar-scroll {
+  flex: 1;
+  height: 100%;
+}
+
+.vue-gantt__sidebar-content {
+  min-height: min-content;
+}
+
+.vue-gantt__chart-column {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  min-width: 0;
+}
+
+.vue-gantt__header-wrapper {
+  flex-shrink: 0;
+  height: auto;
+}
+
+.vue-gantt__chart-scroll {
+  flex: 1;
+  height: 100%;
 }
 
 .vue-gantt__chart {
   position: relative;
+  min-width: min-content;
+  min-height: min-content;
 }
 
 .vue-gantt__svg {
