@@ -7,10 +7,11 @@
           :title="enableSwimlanes && enableProjectGrouping ? 'Projects & Swim Lanes' : (enableSwimlanes ? 'Swim Lanes' : (enableProjectGrouping ? 'Projects & Tasks' : 'Tasks'))"
           :use-two-row-headers="useTwoRowHeaders"
         />
-        <div 
+        <OverlayScrollbarsComponent
+          :options="{ scrollbars: { visibility: 'hidden' }, overflow: { x: 'hidden', y: 'scroll' } }"
           ref="sidebarScrollRef"
           class="vue-gantt__sidebar-scroll"
-          @scroll="handleSidebarScroll"
+          @os-scroll="handleSidebarScroll"
         >
           <div class="vue-gantt__sidebar-content" :style="{ height: `${chartHeight}px` }">
             <!-- Project Grouping + Swim Lane Mode -->
@@ -109,15 +110,17 @@
               />
             </template>
           </div>
-        </div>
+        </OverlayScrollbarsComponent>
       </div>
 
       <!-- Chart Area -->
       <div class="vue-gantt__chart-column">
         <!-- Timeline Header -->
-        <div 
+        <OverlayScrollbarsComponent
+          :options="{ scrollbars: { visibility: 'hidden' }, overflow: { x: 'scroll', y: 'hidden' } }"
           ref="headerScrollRef"
           class="vue-gantt__header-wrapper"
+          @os-scroll="handleHeaderScroll"
         >
           <div :style="{ width: `${chartWidth}px` }">
             <TimelineHeader
@@ -127,13 +130,14 @@
               :use-two-row-headers="useTwoRowHeaders"
             />
           </div>
-        </div>
+        </OverlayScrollbarsComponent>
 
         <!-- Chart SVG with scroll wrapper -->
-        <div 
+        <OverlayScrollbarsComponent
+          :options="{ scrollbars: { autoHide: 'leave', autoHideDelay: 800 }, overflow: { x: 'scroll', y: 'scroll' } }"
           ref="chartScrollRef"
           class="vue-gantt__chart-scroll" 
-          @scroll="handleChartScroll"
+          @os-scroll="handleChartScroll"
         >
           <div class="vue-gantt__chart" :style="{ width: `${chartWidth}px`, height: `${chartHeight}px` }">
             <svg
@@ -234,7 +238,7 @@
               />
             </svg>
           </div>
-        </div>
+        </OverlayScrollbarsComponent>
       </div>
     </div>
   </div>
@@ -245,6 +249,9 @@ import { computed, toRefs, ref } from 'vue'
 import type { GanttTask, GanttMilestone, GanttProject, GanttSwimlane, GanttOptions } from '@/types'
 import { useGanttChart } from '@/composables/useGanttChart'
 import { getDaysDiff } from '@/utils/dateDifference'
+import { OverlayScrollbarsComponent } from 'overlayscrollbars-vue'
+import type { OverlayScrollbars } from 'overlayscrollbars'
+import 'overlayscrollbars/overlayscrollbars.css'
 import GanttSidebar from './GanttSidebar.vue'
 import TimelineHeader from './TimelineHeader.vue'
 import GridLines from './GridLines.vue'
@@ -588,45 +595,74 @@ const primaryPeriods = computed<PrimaryPeriod[]>(() => {
 })
 
 // Refs for scroll synchronization
-const sidebarScrollRef = ref<HTMLElement | null>(null)
-const chartScrollRef = ref<HTMLElement | null>(null)
-const headerScrollRef = ref<HTMLElement | null>(null)
+const sidebarScrollRef = ref<InstanceType<typeof OverlayScrollbarsComponent> | null>(null)
+const chartScrollRef = ref<InstanceType<typeof OverlayScrollbarsComponent> | null>(null)
+const headerScrollRef = ref<InstanceType<typeof OverlayScrollbarsComponent> | null>(null)
 let isScrollingSidebar = false
 let isScrollingChart = false
+let isScrollingHeader = false
 
 // Handle sidebar scroll
-const handleSidebarScroll = (event: Event) => {
+const handleSidebarScroll = (instance: OverlayScrollbars) => {
   if (isScrollingChart) return
   
-  const target = event.target as HTMLElement
-  if (chartScrollRef.value && target) {
+  const viewport = instance.elements().viewport
+  const scrollTop = viewport.scrollTop
+  const chartInstance = chartScrollRef.value?.osInstance()
+  
+  if (chartInstance) {
     isScrollingSidebar = true
-    chartScrollRef.value.scrollTop = target.scrollTop
-    requestAnimationFrame(() => {
+    const chartViewport = chartInstance.elements().viewport
+    chartViewport.scrollTop = scrollTop
+    setTimeout(() => {
       isScrollingSidebar = false
-    })
+    }, 0)
+  }
+}
+
+// Handle header scroll
+const handleHeaderScroll = (instance: OverlayScrollbars) => {
+  if (isScrollingChart) return
+  
+  const viewport = instance.elements().viewport
+  const scrollLeft = viewport.scrollLeft
+  const chartInstance = chartScrollRef.value?.osInstance()
+  
+  if (chartInstance) {
+    isScrollingHeader = true
+    const chartViewport = chartInstance.elements().viewport
+    chartViewport.scrollLeft = scrollLeft
+    setTimeout(() => {
+      isScrollingHeader = false
+    }, 0)
   }
 }
 
 // Handle chart scroll
-const handleChartScroll = (event: Event) => {
-  if (isScrollingSidebar) return
+const handleChartScroll = (instance: OverlayScrollbars) => {
+  const viewport = instance.elements().viewport
+  const scrollTop = viewport.scrollTop
+  const scrollLeft = viewport.scrollLeft
   
-  const target = event.target as HTMLElement
+  const sidebarInstance = sidebarScrollRef.value?.osInstance()
+  const headerInstance = headerScrollRef.value?.osInstance()
   
   // Sync vertical scroll with sidebar
-  if (sidebarScrollRef.value && target) {
+  if (!isScrollingSidebar && sidebarInstance) {
     isScrollingChart = true
-    sidebarScrollRef.value.scrollTop = target.scrollTop
-    requestAnimationFrame(() => {
-      isScrollingChart = false
-    })
+    const sidebarViewport = sidebarInstance.elements().viewport
+    sidebarViewport.scrollTop = scrollTop
   }
   
   // Sync horizontal scroll with header
-  if (headerScrollRef.value && target) {
-    headerScrollRef.value.scrollLeft = target.scrollLeft
+  if (!isScrollingHeader && headerInstance) {
+    const headerViewport = headerInstance.elements().viewport
+    headerViewport.scrollLeft = scrollLeft
   }
+  
+  setTimeout(() => {
+    isScrollingChart = false
+  }, 0)
 }
 </script>
 
@@ -652,11 +688,7 @@ const handleChartScroll = (event: Event) => {
 
 .vue-gantt__sidebar-scroll {
   flex: 1;
-  overflow-y: auto;
-  overflow-x: hidden;
-}
-.vue-gantt__sidebar-scroll::-webkit-scrollbar {
-  display: none;
+  height: 100%;
 }
 
 .vue-gantt__sidebar-content {
@@ -673,13 +705,12 @@ const handleChartScroll = (event: Event) => {
 
 .vue-gantt__header-wrapper {
   flex-shrink: 0;
-  overflow-x: hidden;
-  overflow-y: hidden;
+  height: auto;
 }
 
 .vue-gantt__chart-scroll {
   flex: 1;
-  overflow: auto;
+  height: 100%;
 }
 
 .vue-gantt__chart {
