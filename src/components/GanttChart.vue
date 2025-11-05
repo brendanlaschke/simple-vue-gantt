@@ -692,6 +692,7 @@ const handleChartScroll = (instance: OverlayScrollbars) => {
 }
 
 .vue-gantt__sidebar-content {
+  position: relative;
   min-height: min-content;
 }
 

@@ -29,6 +29,9 @@ defineEmits<{
 
 <style scoped>
 .project-header {
+  position: absolute;
+  left: 0;
+  right: 0;
   display: flex;
   align-items: center;
   padding: 0 16px;
@@ -36,8 +39,6 @@ defineEmits<{
   font-weight: 600;
   color: #111827;
   background: #f3f4f6;
-  border-top: 1px solid #e5e7eb;
-  border-bottom: 1px solid #e5e7eb;
   cursor: pointer;
   transition: background-color 0.2s;
 }

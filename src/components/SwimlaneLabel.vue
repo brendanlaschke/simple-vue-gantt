@@ -3,6 +3,7 @@
     class="swimlane-label"
     :style="{
       height: `${height}px`,
+      top: `${top}px`,
       backgroundColor: color || '#f3f4f6'
     }"
   >
@@ -23,10 +24,12 @@ defineProps<Props>()
 
 <style scoped>
 .swimlane-label {
+  position: absolute;
+  left: 0;
+  right: 0;
   display: flex;
   align-items: center;
   padding: 0 16px;
-  border-bottom: 1px solid #e5e7eb;
   font-size: 14px;
   font-weight: 600;
   color: #374151;
