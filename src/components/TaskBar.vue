@@ -6,6 +6,8 @@
       'task-bar-group--movable': editPosition,
     }"
   >
+    <title v-if="showTooltips">{{ task.name }}</title>
+    
     <!-- Task Background -->
     <rect
       :x="displayX"
@@ -34,6 +36,14 @@
     />
 
     <!-- Task Label -->
+    <clipPath :id="`clip-${task.id}`">
+      <rect
+        :x="displayX"
+        :y="task.y"
+        :width="displayWidth - 16"
+        :height="barHeight"
+      />
+    </clipPath>
     <text
       :x="displayX + 8"
       :y="task.y + barHeight / 2"
@@ -42,8 +52,9 @@
       fill="white"
       font-size="12"
       font-weight="500"
+      :clip-path="`url(#clip-${task.id})`"
     >
-      <tspan >{{ task.name }}</tspan>
+      <tspan>{{ task.name }}</tspan>
       <tspan v-if="showProgress"> - {{ task.progress }}%</tspan>
     </text>
 
@@ -86,12 +97,14 @@ interface Props {
   editDuration?: boolean
   editPosition?: boolean
   showProgress?: boolean
+  showTooltips?: boolean
 }
 
 const props = withDefaults(defineProps<Props>(), {
   editDuration: false,
   editPosition: false,
-  showProgress: false
+  showProgress: false,
+  showTooltips: true
 })
 
 const emit = defineEmits<{

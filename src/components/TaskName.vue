@@ -3,6 +3,7 @@
     class="task-name"
     :class="{ 'task-name--grouped': isGrouped }"
     :style="{ height: `${height}px`, marginBottom: `${marginBottom}px` }"
+    :title="showTooltips ? name : undefined"
   >
     {{ name }}
   </div>
@@ -14,10 +15,12 @@ interface Props {
   height: number
   marginBottom: number
   isGrouped?: boolean
+  showTooltips?: boolean
 }
 
 withDefaults(defineProps<Props>(), {
-  isGrouped: false
+  isGrouped: false,
+  showTooltips: false
 })
 </script>
 

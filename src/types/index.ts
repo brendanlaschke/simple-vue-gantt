@@ -117,12 +117,14 @@ export interface GanttOptions {
   hideOrphanDependencies?: boolean;
   /** Whether to enable swim lanes */
   enableSwimlanes?: boolean;
-  /** Height of swim lane rows in pixels */
-  swimlaneHeight?: number;
   /** Whether to show project summary bars in project headers */
   showProjectSummary?: boolean;
   /** Whether to show progress percentage as text on task bars */
   showTaskProgress?: boolean;
+  /** Custom title for the sidebar header */
+  sidebarTitle?: string;
+  /** Whether to show tooltips with full task name on hover */
+  showTooltips?: boolean;
 }
 
 /**

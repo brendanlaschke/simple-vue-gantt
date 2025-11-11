@@ -67,9 +67,10 @@ const DEFAULT_OPTIONS: Required<GanttOptions> = {
   editPosition: true,
   hideOrphanDependencies: true,
   enableSwimlanes: false,
-  swimlaneHeight: 80,
   showProjectSummary: true,
   showTaskProgress: false,
+  sidebarTitle: "",
+  showTooltips: false,
 };
 
 export function useGanttChart(

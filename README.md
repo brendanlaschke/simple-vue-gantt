@@ -37,7 +37,6 @@ const options =  {
   editPosition: true,
   hideOrphanDependencies: true,
   enableSwimlanes: true,
-  swimlaneHeight: 80,
   showProjectSummary: true,
   showTaskProgress: true,
 }

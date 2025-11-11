@@ -4,7 +4,7 @@
       <!-- Sidebar with Task Names -->
       <div class="vue-gantt__sidebar-column">
         <GanttSidebar 
-          :title="enableSwimlanes && enableProjectGrouping ? 'Projects & Swim Lanes' : (enableSwimlanes ? 'Swim Lanes' : (enableProjectGrouping ? 'Projects & Tasks' : 'Tasks'))"
+          :title="sidebarTitle"
           :use-two-row-headers="useTwoRowHeaders"
         />
         <OverlayScrollbarsComponent
@@ -85,6 +85,7 @@
                     :height="barHeight"
                     :margin-bottom="barPadding"
                     :is-grouped="true"
+                    :show-tooltips="showTooltips"
                   />
                 </template>
               </template>
@@ -96,6 +97,7 @@
                 :name="task.name"
                 :height="barHeight"
                 :margin-bottom="barPadding"
+                :show-tooltips="showTooltips"
               />
             </template>
 
@@ -107,6 +109,7 @@
                 :name="task.name"
                 :height="barHeight"
                 :margin-bottom="barPadding"
+                :show-tooltips="showTooltips"
               />
             </template>
           </div>
@@ -213,6 +216,7 @@
                   :edit-duration="options.editDuration"
                   :edit-position="options.editPosition"
                   :show-progress="showTaskProgress"
+                  :show-tooltips="showTooltips"
                   @update:task="handleTaskUpdate"
                   @click="handleTaskClick"
                 />
@@ -326,6 +330,21 @@ const showMilestoneLabels = computed(() => options.value.showMilestoneLabels !==
 const hideOrphanDependencies = computed(() => options.value.hideOrphanDependencies !== false)
 const showProjectSummary = computed(() => options.value.showProjectSummary !== false)
 const showTaskProgress = computed(() => options.value.showTaskProgress || false)
+const showTooltips = computed(() => options.value.showTooltips !== false)
+const sidebarTitle = computed(() => {
+  if (options.value.sidebarTitle) {
+    return options.value.sidebarTitle
+  }
+  // Default title based on enabled features
+  if (enableSwimlanes.value && enableProjectGrouping.value) {
+    return 'Projects & Swim Lanes'
+  } else if (enableSwimlanes.value) {
+    return 'Swim Lanes'
+  } else if (enableProjectGrouping.value) {
+    return 'Projects & Tasks'
+  }
+  return 'Tasks'
+})
 
 // Handle task updates from drag operations
 const handleTaskUpdate = (taskId: string, updates: { start?: Date; end?: Date }) => {
