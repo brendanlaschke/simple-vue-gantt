@@ -24,10 +24,7 @@ export function getHoursDiff(start: Date, end: Date): number {
  * Get the difference in months between two dates
  */
 export function getMonthsDiff(start: Date, end: Date): number {
-  return (
-    (end.getFullYear() - start.getFullYear()) * 12 +
-    (end.getMonth() - start.getMonth())
-  );
+  return (end.getFullYear() - start.getFullYear()) * 12 + (end.getMonth() - start.getMonth());
 }
 
 /**

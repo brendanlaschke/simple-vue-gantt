@@ -1,13 +1,13 @@
 <template>
-  <g 
-    class="task-bar-group" 
+  <g
+    class="task-bar-group"
     :class="{ 
       'task-bar-group--dragging': isDragging,
       'task-bar-group--movable': editPosition,
     }"
   >
     <title v-if="showTooltips">{{ task.name }}</title>
-    
+
     <!-- Task Background -->
     <rect
       :x="displayX"
@@ -21,7 +21,7 @@
       @mousedown="startDrag($event, 'move')"
       @click="handleClick"
     />
-    
+
     <!-- Task Progress -->
     <rect
       :x="displayX"
@@ -37,12 +37,7 @@
 
     <!-- Task Label -->
     <clipPath :id="`clip-${task.id}`">
-      <rect
-        :x="displayX"
-        :y="task.y"
-        :width="displayWidth - 16"
-        :height="barHeight"
-      />
+      <rect :x="displayX" :y="task.y" :width="displayWidth - 16" :height="barHeight" />
     </clipPath>
     <text
       :x="displayX + 8"
@@ -131,10 +126,10 @@ const startDrag = (event: MouseEvent, type: 'move' | 'resize-left' | 'resize-rig
   // Check permissions based on drag type
   if (type === 'move' && !props.editPosition) return
   if ((type === 'resize-left' || type === 'resize-right') && !props.editDuration) return
-  
+
   event.preventDefault()
   event.stopPropagation()
-  
+
   isDragging.value = true
   dragType.value = type
   dragStartX.value = event.clientX
@@ -143,9 +138,9 @@ const startDrag = (event: MouseEvent, type: 'move' | 'resize-left' | 'resize-rig
 
   const onMouseMove = (e: MouseEvent) => {
     if (!isDragging.value) return
-    
+
     const deltaX = e.clientX - dragStartX.value
-    
+
     if (dragType.value === 'move') {
       tempX.value = props.task.x + deltaX
     } else if (dragType.value === 'resize-left') {
@@ -165,17 +160,17 @@ const startDrag = (event: MouseEvent, type: 'move' | 'resize-left' | 'resize-rig
 
   const onMouseUp = () => {
     if (!isDragging.value) return
-    
+
     // Calculate new dates based on final position
     const updates = calculateDateUpdates()
-    
+
     if (updates.start || updates.end) {
       emit('update:task', props.task.id, updates)
     }
-    
+
     isDragging.value = false
     dragType.value = null
-    
+
     document.removeEventListener('mousemove', onMouseMove)
     document.removeEventListener('mouseup', onMouseUp)
   }
@@ -186,12 +181,12 @@ const startDrag = (event: MouseEvent, type: 'move' | 'resize-left' | 'resize-rig
 
 const calculateDateUpdates = () => {
   const updates: { start?: Date; end?: Date } = {}
-  
+
   if (dragType.value === 'move') {
     // Calculate offset in days/columns
     const offsetX = tempX.value - props.task.x
     const offsetColumns = Math.round(offsetX / props.columnWidth)
-    
+
     if (offsetColumns !== 0) {
       const offsetMs = getOffsetMilliseconds(offsetColumns)
       updates.start = new Date(props.task.start.getTime() + offsetMs)
@@ -200,7 +195,7 @@ const calculateDateUpdates = () => {
   } else if (dragType.value === 'resize-left') {
     const offsetX = tempX.value - props.task.x
     const offsetColumns = Math.round(offsetX / props.columnWidth)
-    
+
     if (offsetColumns !== 0) {
       const offsetMs = getOffsetMilliseconds(offsetColumns)
       updates.start = new Date(props.task.start.getTime() + offsetMs)
@@ -208,19 +203,19 @@ const calculateDateUpdates = () => {
   } else if (dragType.value === 'resize-right') {
     const widthDiff = tempWidth.value - props.task.width
     const offsetColumns = Math.round(widthDiff / props.columnWidth)
-    
+
     if (offsetColumns !== 0) {
       const offsetMs = getOffsetMilliseconds(offsetColumns)
       updates.end = new Date(props.task.end.getTime() + offsetMs)
     }
   }
-  
+
   return updates
 }
 
 const getOffsetMilliseconds = (columns: number): number => {
   const mode = props.viewMode || 'day'
-  
+
   switch (mode) {
     case 'hour':
       return columns * 60 * 60 * 1000

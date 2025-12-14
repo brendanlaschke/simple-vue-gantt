@@ -1,6 +1,9 @@
 <template>
   <div class="vue-gantt-sidebar">
-    <div class="vue-gantt-sidebar__header" :class="{ 'vue-gantt-sidebar__header--two-row': useTwoRowHeaders }">
+    <div
+      class="vue-gantt-sidebar__header"
+      :class="{ 'vue-gantt-sidebar__header--two-row': useTwoRowHeaders }"
+    >
       {{ title }}
     </div>
   </div>

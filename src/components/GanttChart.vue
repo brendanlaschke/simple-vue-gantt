@@ -3,10 +3,7 @@
     <div class="vue-gantt__container">
       <!-- Sidebar with Task Names -->
       <div class="vue-gantt__sidebar-column">
-        <GanttSidebar 
-          :title="sidebarTitle"
-          :use-two-row-headers="useTwoRowHeaders"
-        />
+        <GanttSidebar :title="sidebarTitle" :use-two-row-headers="useTwoRowHeaders" />
         <OverlayScrollbarsComponent
           :options="{ scrollbars: { visibility: 'hidden' }, overflow: { x: 'hidden', y: 'scroll' } }"
           ref="sidebarScrollRef"
@@ -26,7 +23,7 @@
                   :task-count="project.taskCount"
                   @toggle="toggleProject(project.id)"
                 />
-                
+
                 <!-- Swimlanes within this project -->
                 <template v-if="project.isExpanded">
                   <SwimlaneLabel
@@ -75,7 +72,7 @@
                   :task-count="project.taskCount"
                   @toggle="toggleProject(project.id)"
                 />
-                
+
                 <!-- Project Tasks -->
                 <template v-if="project.isExpanded">
                   <TaskName
@@ -139,15 +136,14 @@
         <OverlayScrollbarsComponent
           :options="{ scrollbars: { autoHide: 'leave', autoHideDelay: 800 }, overflow: { x: 'scroll', y: 'scroll' } }"
           ref="chartScrollRef"
-          class="vue-gantt__chart-scroll" 
+          class="vue-gantt__chart-scroll"
           @os-scroll="handleChartScroll"
         >
-          <div class="vue-gantt__chart" :style="{ width: `${chartWidth}px`, height: `${chartHeight}px` }">
-            <svg
-              :width="chartWidth"
-              :height="chartHeight"
-              class="vue-gantt__svg"
-            >
+          <div
+            class="vue-gantt__chart"
+            :style="{ width: `${chartWidth}px`, height: `${chartHeight}px` }"
+          >
+            <svg :width="chartWidth" :height="chartHeight" class="vue-gantt__svg">
               <!-- Grid Lines -->
               <GridLines
                 :columns="timeColumns"
@@ -189,7 +185,10 @@
               />
 
               <!-- Project Summary Bars -->
-              <g v-if="enableProjectGrouping && showProjectSummary" class="vue-gantt__project-summaries">
+              <g
+                v-if="enableProjectGrouping && showProjectSummary"
+                class="vue-gantt__project-summaries"
+              >
                 <ProjectSummaryBar
                   v-for="project in renderedProjects"
                   :key="`summary-${project.id}`"
@@ -236,10 +235,7 @@
               </g>
 
               <!-- Task Dependencies -->
-              <DependencyArrows
-                :arrows="dependencyArrows"
-                :show-dependencies="showDependencies"
-              />
+              <DependencyArrows :arrows="dependencyArrows" :show-dependencies="showDependencies" />
             </svg>
           </div>
         </OverlayScrollbarsComponent>
@@ -307,7 +303,7 @@ const {
   toggleProject
 } = useGanttChart(
   computed(() => tasks.value),
-  computed(() => milestones.value), 
+  computed(() => milestones.value),
   computed(() => projects.value),
   computed(() => swimlanes.value),
   computed(() => options.value)
@@ -351,26 +347,26 @@ const handleTaskUpdate = (taskId: string, updates: { start?: Date; end?: Date })
   // Find the task in the original tasks array
   const taskIndex = tasks.value.findIndex(t => t.id === taskId)
   if (taskIndex === -1) return
-  
+
   const task = tasks.value[taskIndex]
-  
+
   // Create updated task
   const updatedTask = {
     ...task,
     start: updates.start || task.start,
     end: updates.end || task.end
   }
-  
+
   // Create new tasks array with the updated task
   const updatedTasks = [...tasks.value]
   updatedTasks[taskIndex] = updatedTask
-  
+
   // Emit update:tasks for v-model support
   emit('update:tasks', updatedTasks)
-  
+
   // Emit specific event based on what changed
   emit('task:update', taskId, updates)
-  
+
   // Emit more specific events
   if (updates.start && updates.end) {
     // Both changed - this is a move operation
@@ -452,30 +448,30 @@ interface Arrow {
 
 const dependencyArrows = computed<Arrow[]>(() => {
   const arrows: Arrow[] = []
-  
+
   // Task to Task dependencies
   renderedTasks.value.forEach((task) => {
     // Skip if task is not visible (collapsed project) and hideOrphanDependencies is enabled
     if (hideOrphanDependencies.value && task.isVisible === false) return
     if (!task.dependencies || task.dependencies.length === 0) return
-    
+
     task.dependencies.forEach((depId) => {
       // Check if dependency is a task
       const depTask = renderedTasks.value.find((t) => t.id === depId)
       if (depTask) {
         // Skip if dependency task is not visible (collapsed project) and hideOrphanDependencies is enabled
         if (hideOrphanDependencies.value && depTask.isVisible === false) return
-        
+
         const startX = depTask.x + depTask.width
         const startY = depTask.y + barHeight.value / 2
         const endX = task.x
         const endY = task.y + barHeight.value / 2
-        
+
         // Create a rectangular step arrow path
         const path = createRectangularPath(startX, startY, endX, endY, {
           offset: 20
         })
-        
+
         arrows.push({
           id: `${depId}-${task.id}`,
           path
@@ -488,17 +484,17 @@ const dependencyArrows = computed<Arrow[]>(() => {
       if (depMilestone) {
         // Skip if dependency milestone is not visible (collapsed project) and hideOrphanDependencies is enabled
         if (hideOrphanDependencies.value && depMilestone.isVisible === false) return
-        
+
         const startX = depMilestone.x + milestoneSize.value / 2 // Start from right edge of milestone diamond
         const startY = depMilestone.y + barHeight.value / 2
         const endX = task.x
         const endY = task.y + barHeight.value / 2
-        
+
         // Create rectangular arrow path from milestone (starts from right edge)
         const path = createRectangularPath(startX, startY, endX, endY, {
           offset: 20
         })
-        
+
         arrows.push({
           id: `${depId}-${task.id}`,
           path
@@ -512,24 +508,24 @@ const dependencyArrows = computed<Arrow[]>(() => {
     // Skip if milestone is not visible (collapsed project) and hideOrphanDependencies is enabled
     if (hideOrphanDependencies.value && milestone.isVisible === false) return
     if (!milestone.dependencies || milestone.dependencies.length === 0) return
-    
+
     milestone.dependencies.forEach((depId) => {
       // Check if dependency is a task
       const depTask = renderedTasks.value.find((t) => t.id === depId)
       if (depTask) {
         // Skip if dependency task is not visible (collapsed project) and hideOrphanDependencies is enabled
         if (hideOrphanDependencies.value && depTask.isVisible === false) return
-        
+
         const startX = depTask.x + depTask.width
         const startY = depTask.y + barHeight.value / 2
         const endX = milestone.x - milestoneSize.value / 2 // Point to left edge of milestone diamond
         const endY = milestone.y + barHeight.value / 2
-        
+
         // Create rectangular arrow path to milestone (ends at left edge)
         const path = createRectangularPath(startX, startY, endX, endY, {
           offset: 20
         })
-        
+
         arrows.push({
           id: `${depId}-${milestone.id}`,
           path
@@ -542,17 +538,17 @@ const dependencyArrows = computed<Arrow[]>(() => {
       if (depMilestone) {
         // Skip if dependency milestone is not visible (collapsed project) and hideOrphanDependencies is enabled
         if (hideOrphanDependencies.value && depMilestone.isVisible === false) return
-        
+
         const startX = depMilestone.x + milestoneSize.value / 2 // Start from right edge of milestone diamond
         const startY = depMilestone.y + barHeight.value / 2
         const endX = milestone.x - milestoneSize.value / 2 // Point to left edge of milestone diamond
         const endY = milestone.y + barHeight.value / 2
-        
+
         // Create rectangular arrow path from milestone to milestone (starts at right edge, ends at left edge)
         const path = createRectangularPath(startX, startY, endX, endY, {
           offset: 20
         })
-        
+
         arrows.push({
           id: `${depId}-${milestone.id}`,
           path
@@ -560,7 +556,7 @@ const dependencyArrows = computed<Arrow[]>(() => {
       }
     })
   })
-  
+
   return arrows
 })
 
@@ -624,11 +620,11 @@ let isScrollingHeader = false
 // Handle sidebar scroll
 const handleSidebarScroll = (instance: OverlayScrollbars) => {
   if (isScrollingChart) return
-  
+
   const viewport = instance.elements().viewport
   const scrollTop = viewport.scrollTop
   const chartInstance = chartScrollRef.value?.osInstance()
-  
+
   if (chartInstance) {
     isScrollingSidebar = true
     const chartViewport = chartInstance.elements().viewport
@@ -642,11 +638,11 @@ const handleSidebarScroll = (instance: OverlayScrollbars) => {
 // Handle header scroll
 const handleHeaderScroll = (instance: OverlayScrollbars) => {
   if (isScrollingChart) return
-  
+
   const viewport = instance.elements().viewport
   const scrollLeft = viewport.scrollLeft
   const chartInstance = chartScrollRef.value?.osInstance()
-  
+
   if (chartInstance) {
     isScrollingHeader = true
     const chartViewport = chartInstance.elements().viewport
@@ -662,23 +658,23 @@ const handleChartScroll = (instance: OverlayScrollbars) => {
   const viewport = instance.elements().viewport
   const scrollTop = viewport.scrollTop
   const scrollLeft = viewport.scrollLeft
-  
+
   const sidebarInstance = sidebarScrollRef.value?.osInstance()
   const headerInstance = headerScrollRef.value?.osInstance()
-  
+
   // Sync vertical scroll with sidebar
   if (!isScrollingSidebar && sidebarInstance) {
     isScrollingChart = true
     const sidebarViewport = sidebarInstance.elements().viewport
     sidebarViewport.scrollTop = scrollTop
   }
-  
+
   // Sync horizontal scroll with header
   if (!isScrollingHeader && headerInstance) {
     const headerViewport = headerInstance.elements().viewport
     headerViewport.scrollLeft = scrollLeft
   }
-  
+
   setTimeout(() => {
     isScrollingChart = false
   }, 0)

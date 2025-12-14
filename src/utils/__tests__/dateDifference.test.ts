@@ -1,10 +1,5 @@
 import { describe, it, expect } from "vitest";
-import {
-  getDaysDiff,
-  getHoursDiff,
-  getMonthsDiff,
-  getYearsDiff,
-} from "../dateDifference";
+import { getDaysDiff, getHoursDiff, getMonthsDiff, getYearsDiff } from "../dateDifference";
 
 describe("dateDifference", () => {
   describe("getDaysDiff", () => {

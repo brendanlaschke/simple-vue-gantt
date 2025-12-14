@@ -1,5 +1,5 @@
 <template>
-  <div 
+  <div
     class="swimlane-label"
     :style="{
       height: `${height}px`,

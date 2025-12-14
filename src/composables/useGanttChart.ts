@@ -14,17 +14,8 @@ import type {
 } from "@/types";
 import { getColumnCount, getColumnDate } from "@/utils/columnCalculations";
 import { isPrimaryPeriodStart } from "@/utils/dateComparison";
-import {
-  getDaysDiff,
-  getHoursDiff,
-  getMonthsDiff,
-  getYearsDiff,
-} from "@/utils/dateDifference";
-import {
-  formatDate,
-  formatPrimaryLabel,
-  formatSecondaryLabel,
-} from "@/utils/dateFormatting";
+import { getDaysDiff, getHoursDiff, getMonthsDiff, getYearsDiff } from "@/utils/dateDifference";
+import { formatDate, formatPrimaryLabel, formatSecondaryLabel } from "@/utils/dateFormatting";
 import {
   startOfDay,
   startOfHour,
@@ -158,9 +149,7 @@ export function useGanttChart(
     const result: RenderedProject[] = [];
 
     projects.value.forEach((project) => {
-      const projectTasks = tasks.value.filter(
-        (t) => t.projectId === project.id
-      );
+      const projectTasks = tasks.value.filter((t) => t.projectId === project.id);
       const taskCount = projectTasks.length;
       const isExpanded = projectStates.value.get(project.id) ?? true;
 
@@ -204,10 +193,7 @@ export function useGanttChart(
             break;
           }
           case "month": {
-            const startMonths = getMonthsDiff(
-              chartStartDate.value,
-              projectStart
-            );
+            const startMonths = getMonthsDiff(chartStartDate.value, projectStart);
             const durationMonths = getMonthsDiff(projectStart, projectEnd);
             projectX = startMonths * columnWidth.value;
             projectWidth = durationMonths * columnWidth.value;
@@ -265,10 +251,7 @@ export function useGanttChart(
 
               switch (viewMode.value) {
                 case "hour": {
-                  const startHours = getHoursDiff(
-                    chartStartDate.value,
-                    task.start
-                  );
+                  const startHours = getHoursDiff(chartStartDate.value, task.start);
                   const durationHours = getHoursDiff(task.start, task.end);
                   x = startHours * columnWidth.value;
                   width = durationHours * columnWidth.value;
@@ -283,20 +266,14 @@ export function useGanttChart(
                   width = (duration / 7) * columnWidth.value;
                   break;
                 case "month": {
-                  const startMonths = getMonthsDiff(
-                    chartStartDate.value,
-                    task.start
-                  );
+                  const startMonths = getMonthsDiff(chartStartDate.value, task.start);
                   const durationMonths = getMonthsDiff(task.start, task.end);
                   x = startMonths * columnWidth.value;
                   width = durationMonths * columnWidth.value;
                   break;
                 }
                 case "year": {
-                  const startYears = getYearsDiff(
-                    chartStartDate.value,
-                    task.start
-                  );
+                  const startYears = getYearsDiff(chartStartDate.value, task.start);
                   const durationYears = getYearsDiff(task.start, task.end);
                   x = startYears * columnWidth.value;
                   width = durationYears * columnWidth.value;
@@ -314,23 +291,15 @@ export function useGanttChart(
               };
             });
 
-            const taskRows = packTasksIntoRows(
-              tasksWithPositions,
-              barPadding.value
-            );
-            const rowCount = Math.max(
-              1,
-              ...Array.from(taskRows.values()).map((r) => r + 1)
-            );
-            const swimlaneHeight =
-              rowCount * (barHeight.value + barPadding.value);
+            const taskRows = packTasksIntoRows(tasksWithPositions, barPadding.value);
+            const rowCount = Math.max(1, ...Array.from(taskRows.values()).map((r) => r + 1));
+            const swimlaneHeight = rowCount * (barHeight.value + barPadding.value);
 
             projectContentHeight += swimlaneHeight;
           });
         } else {
           // Simple mode: use task count
-          projectContentHeight =
-            taskCount * (barHeight.value + barPadding.value);
+          projectContentHeight = taskCount * (barHeight.value + barPadding.value);
         }
         currentY += projectContentHeight;
       }
@@ -383,10 +352,7 @@ export function useGanttChart(
 
               switch (viewMode.value) {
                 case "hour": {
-                  const startHours = getHoursDiff(
-                    chartStartDate.value,
-                    task.start
-                  );
+                  const startHours = getHoursDiff(chartStartDate.value, task.start);
                   const durationHours = getHoursDiff(task.start, task.end);
                   x = startHours * columnWidth.value;
                   width = durationHours * columnWidth.value;
@@ -401,20 +367,14 @@ export function useGanttChart(
                   width = (duration / 7) * columnWidth.value;
                   break;
                 case "month": {
-                  const startMonths = getMonthsDiff(
-                    chartStartDate.value,
-                    task.start
-                  );
+                  const startMonths = getMonthsDiff(chartStartDate.value, task.start);
                   const durationMonths = getMonthsDiff(task.start, task.end);
                   x = startMonths * columnWidth.value;
                   width = durationMonths * columnWidth.value;
                   break;
                 }
                 case "year": {
-                  const startYears = getYearsDiff(
-                    chartStartDate.value,
-                    task.start
-                  );
+                  const startYears = getYearsDiff(chartStartDate.value, task.start);
                   const durationYears = getYearsDiff(task.start, task.end);
                   x = startYears * columnWidth.value;
                   width = durationYears * columnWidth.value;
@@ -433,16 +393,9 @@ export function useGanttChart(
             });
 
             // Pack tasks into rows
-            const taskRows = packTasksIntoRows(
-              tasksWithPositions,
-              barPadding.value
-            );
-            const rowCount = Math.max(
-              1,
-              ...Array.from(taskRows.values()).map((r) => r + 1)
-            );
-            const swimlaneHeight =
-              rowCount * (barHeight.value + barPadding.value);
+            const taskRows = packTasksIntoRows(tasksWithPositions, barPadding.value);
+            const rowCount = Math.max(1, ...Array.from(taskRows.values()).map((r) => r + 1));
+            const swimlaneHeight = rowCount * (barHeight.value + barPadding.value);
 
             allSwimlanes.push({
               ...swimlane,
@@ -489,10 +442,7 @@ export function useGanttChart(
               width = (duration / 7) * columnWidth.value;
               break;
             case "month": {
-              const startMonths = getMonthsDiff(
-                chartStartDate.value,
-                task.start
-              );
+              const startMonths = getMonthsDiff(chartStartDate.value, task.start);
               const durationMonths = getMonthsDiff(task.start, task.end);
               x = startMonths * columnWidth.value;
               width = durationMonths * columnWidth.value;
@@ -517,14 +467,8 @@ export function useGanttChart(
           };
         });
 
-        const taskRows = packTasksIntoRows(
-          tasksWithPositions,
-          barPadding.value
-        );
-        const rowCount = Math.max(
-          1,
-          ...Array.from(taskRows.values()).map((r) => r + 1)
-        );
+        const taskRows = packTasksIntoRows(tasksWithPositions, barPadding.value);
+        const rowCount = Math.max(1, ...Array.from(taskRows.values()).map((r) => r + 1));
         const swimlaneHeight = rowCount * (barHeight.value + barPadding.value);
 
         allSwimlanes.push({
@@ -542,9 +486,7 @@ export function useGanttChart(
 
     // Swimlanes without project grouping
     return swimlanes.value.map((swimlane) => {
-      const swimlaneTasks = tasks.value.filter(
-        (t) => t.swimlaneId === swimlane.id
-      );
+      const swimlaneTasks = tasks.value.filter((t) => t.swimlaneId === swimlane.id);
 
       // Calculate basic positions to determine packing
       const tasksWithPositions = swimlaneTasks.map((task) => {
@@ -598,10 +540,7 @@ export function useGanttChart(
 
       // Pack tasks into rows
       const taskRows = packTasksIntoRows(tasksWithPositions, barPadding.value);
-      const rowCount = Math.max(
-        1,
-        ...Array.from(taskRows.values()).map((r) => r + 1)
-      );
+      const rowCount = Math.max(1, ...Array.from(taskRows.values()).map((r) => r + 1));
 
       const swimlaneHeight = rowCount * (barHeight.value + barPadding.value);
 
@@ -623,11 +562,7 @@ export function useGanttChart(
    */
   const timeColumns = computed<TimeColumn[]>(() => {
     const columns: TimeColumn[] = [];
-    const columnCount = getColumnCount(
-      chartStartDate.value,
-      chartEndDate.value,
-      viewMode.value
-    );
+    const columnCount = getColumnCount(chartStartDate.value, chartEndDate.value, viewMode.value);
 
     for (let i = 0; i < columnCount; i++) {
       const date = getColumnDate(chartStartDate.value, i, viewMode.value);
@@ -652,10 +587,7 @@ export function useGanttChart(
    */
   const renderedTasks = computed<RenderedTask[]>(() => {
     // Swim lane mode with project grouping - pack tasks into swim lanes within projects
-    if (
-      mergedOptions.value.enableSwimlanes &&
-      mergedOptions.value.enableProjectGrouping
-    ) {
+    if (mergedOptions.value.enableSwimlanes && mergedOptions.value.enableProjectGrouping) {
       const rendered: RenderedTask[] = [];
 
       projects.value.forEach((project) => {
@@ -692,10 +624,7 @@ export function useGanttChart(
 
               switch (viewMode.value) {
                 case "hour": {
-                  const startHours = getHoursDiff(
-                    chartStartDate.value,
-                    task.start
-                  );
+                  const startHours = getHoursDiff(chartStartDate.value, task.start);
                   const durationHours = getHoursDiff(task.start, task.end);
                   x = startHours * columnWidth.value;
                   width = durationHours * columnWidth.value;
@@ -710,20 +639,14 @@ export function useGanttChart(
                   width = (duration / 7) * columnWidth.value;
                   break;
                 case "month": {
-                  const startMonths = getMonthsDiff(
-                    chartStartDate.value,
-                    task.start
-                  );
+                  const startMonths = getMonthsDiff(chartStartDate.value, task.start);
                   const durationMonths = getMonthsDiff(task.start, task.end);
                   x = startMonths * columnWidth.value;
                   width = durationMonths * columnWidth.value;
                   break;
                 }
                 case "year": {
-                  const startYears = getYearsDiff(
-                    chartStartDate.value,
-                    task.start
-                  );
+                  const startYears = getYearsDiff(chartStartDate.value, task.start);
                   const durationYears = getYearsDiff(task.start, task.end);
                   x = startYears * columnWidth.value;
                   width = durationYears * columnWidth.value;
@@ -747,15 +670,11 @@ export function useGanttChart(
               x: st.x,
               width: st.width,
             }));
-            const taskToRow = packTasksIntoRows(
-              taskPositions,
-              barPadding.value
-            );
+            const taskToRow = packTasksIntoRows(taskPositions, barPadding.value);
 
             tasksWithPositions.forEach(({ task, x, width }) => {
               const row = taskToRow.get(task.id) || 0;
-              const y =
-                renderedSwimlane.y + row * (barHeight.value + barPadding.value);
+              const y = renderedSwimlane.y + row * (barHeight.value + barPadding.value);
 
               rendered.push({
                 ...task,
@@ -769,9 +688,7 @@ export function useGanttChart(
           });
         } else {
           // Project is collapsed - mark all tasks as not visible
-          const projectTasks = tasks.value.filter(
-            (t) => t.projectId === project.id
-          );
+          const projectTasks = tasks.value.filter((t) => t.projectId === project.id);
           projectTasks.forEach((task) => {
             rendered.push({
               ...task,
@@ -792,9 +709,7 @@ export function useGanttChart(
 
         if (orphanSwimlaneTasks.length === 0) return;
 
-        const renderedSwimlane = renderedSwimlanes.value.find(
-          (rs) => rs.id === swimlane.id
-        );
+        const renderedSwimlane = renderedSwimlanes.value.find((rs) => rs.id === swimlane.id);
         if (!renderedSwimlane) return;
 
         const tasksWithPositions: Array<{
@@ -827,10 +742,7 @@ export function useGanttChart(
               width = (duration / 7) * columnWidth.value;
               break;
             case "month": {
-              const startMonths = getMonthsDiff(
-                chartStartDate.value,
-                task.start
-              );
+              const startMonths = getMonthsDiff(chartStartDate.value, task.start);
               const durationMonths = getMonthsDiff(task.start, task.end);
               x = startMonths * columnWidth.value;
               width = durationMonths * columnWidth.value;
@@ -864,8 +776,7 @@ export function useGanttChart(
 
         tasksWithPositions.forEach(({ task, x, width }) => {
           const row = taskToRow.get(task.id) || 0;
-          const y =
-            renderedSwimlane.y + row * (barHeight.value + barPadding.value);
+          const y = renderedSwimlane.y + row * (barHeight.value + barPadding.value);
 
           rendered.push({
             ...task,
@@ -1034,9 +945,7 @@ export function useGanttChart(
     let currentY = 0;
 
     projects.value.forEach((project) => {
-      const projectTasks = tasks.value.filter(
-        (t) => t.projectId === project.id
-      );
+      const projectTasks = tasks.value.filter((t) => t.projectId === project.id);
       const isExpanded = projectStates.value.get(project.id) ?? true;
 
       // Add space for project header
@@ -1167,48 +1076,43 @@ export function useGanttChart(
   const renderedMilestones = computed<RenderedMilestone[]>(() => {
     if (!mergedOptions.value.enableProjectGrouping) {
       // Simple mode - position milestones based on their index
-      return milestones.value.map(
-        (milestone: GanttMilestone, index: number) => {
-          const daysDiff = getDaysDiff(chartStartDate.value, milestone.date);
+      return milestones.value.map((milestone: GanttMilestone, index: number) => {
+        const daysDiff = getDaysDiff(chartStartDate.value, milestone.date);
 
-          let x: number;
-          switch (viewMode.value) {
-            case "hour": {
-              const hours = getHoursDiff(chartStartDate.value, milestone.date);
-              x = hours * columnWidth.value;
-              break;
-            }
-            case "day":
-              x = daysDiff * columnWidth.value;
-              break;
-            case "week":
-              x = (daysDiff / 7) * columnWidth.value;
-              break;
-            case "month": {
-              const months = getMonthsDiff(
-                chartStartDate.value,
-                milestone.date
-              );
-              x = months * columnWidth.value;
-              break;
-            }
-            case "year": {
-              const years = getYearsDiff(chartStartDate.value, milestone.date);
-              x = years * columnWidth.value;
-              break;
-            }
-            default:
-              x = 0;
+        let x: number;
+        switch (viewMode.value) {
+          case "hour": {
+            const hours = getHoursDiff(chartStartDate.value, milestone.date);
+            x = hours * columnWidth.value;
+            break;
           }
-
-          return {
-            ...milestone,
-            x: Math.max(0, x),
-            y: index * (barHeight.value + barPadding.value),
-            isVisible: true,
-          };
+          case "day":
+            x = daysDiff * columnWidth.value;
+            break;
+          case "week":
+            x = (daysDiff / 7) * columnWidth.value;
+            break;
+          case "month": {
+            const months = getMonthsDiff(chartStartDate.value, milestone.date);
+            x = months * columnWidth.value;
+            break;
+          }
+          case "year": {
+            const years = getYearsDiff(chartStartDate.value, milestone.date);
+            x = years * columnWidth.value;
+            break;
+          }
+          default:
+            x = 0;
         }
-      );
+
+        return {
+          ...milestone,
+          x: Math.max(0, x),
+          y: index * (barHeight.value + barPadding.value),
+          isVisible: true,
+        };
+      });
     }
 
     // Project grouping mode
@@ -1216,9 +1120,7 @@ export function useGanttChart(
     let currentY = 0;
 
     projects.value.forEach((project) => {
-      const projectMilestones = milestones.value.filter(
-        (m) => m.projectId === project.id
-      );
+      const projectMilestones = milestones.value.filter((m) => m.projectId === project.id);
       const isExpanded = projectStates.value.get(project.id) ?? true;
 
       // Store the project header Y position for milestones
@@ -1267,9 +1169,7 @@ export function useGanttChart(
       });
 
       // Account for project tasks in height calculation
-      const projectTasks = tasks.value.filter(
-        (t) => t.projectId === project.id
-      );
+      const projectTasks = tasks.value.filter((t) => t.projectId === project.id);
       if (isExpanded) {
         currentY += projectTasks.length * (barHeight.value + barPadding.value);
       }
@@ -1324,11 +1224,7 @@ export function useGanttChart(
    * Calculate total chart width
    */
   const chartWidth = computed<number>(() => {
-    const columnCount = getColumnCount(
-      chartStartDate.value,
-      chartEndDate.value,
-      viewMode.value
-    );
+    const columnCount = getColumnCount(chartStartDate.value, chartEndDate.value, viewMode.value);
     return columnCount * columnWidth.value;
   });
 
@@ -1336,10 +1232,7 @@ export function useGanttChart(
    * Calculate total chart height
    */
   const chartHeight = computed<number>(() => {
-    if (
-      mergedOptions.value.enableSwimlanes &&
-      mergedOptions.value.enableProjectGrouping
-    ) {
+    if (mergedOptions.value.enableSwimlanes && mergedOptions.value.enableProjectGrouping) {
       // Combined mode: sum project headers + swimlane heights
       let height = 0;
       projects.value.forEach((project) => {
@@ -1361,9 +1254,7 @@ export function useGanttChart(
 
       // Add orphan swimlanes
       swimlanes.value.forEach((swimlane) => {
-        const renderedSwimlane = renderedSwimlanes.value.find(
-          (rs) => rs.id === swimlane.id
-        );
+        const renderedSwimlane = renderedSwimlanes.value.find((rs) => rs.id === swimlane.id);
         if (renderedSwimlane) {
           height += renderedSwimlane.height;
         }
@@ -1374,10 +1265,7 @@ export function useGanttChart(
 
     if (mergedOptions.value.enableSwimlanes) {
       // Swimlane-only mode: sum up all swimlane heights
-      return renderedSwimlanes.value.reduce(
-        (total, swimlane) => total + swimlane.height,
-        0
-      );
+      return renderedSwimlanes.value.reduce((total, swimlane) => total + swimlane.height, 0);
     }
 
     if (!mergedOptions.value.enableProjectGrouping) {
@@ -1386,9 +1274,7 @@ export function useGanttChart(
 
     let height = 0;
     projects.value.forEach((project) => {
-      const projectTasks = tasks.value.filter(
-        (t) => t.projectId === project.id
-      );
+      const projectTasks = tasks.value.filter((t) => t.projectId === project.id);
       const isExpanded = projectStates.value.get(project.id) ?? true;
 
       height += mergedOptions.value.projectHeaderHeight;

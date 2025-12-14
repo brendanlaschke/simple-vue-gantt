@@ -8,7 +8,7 @@
       stroke-width="2"
       class="milestone-group__diamond"
     />
-    
+
     <!-- Milestone Label -->
     <text
       v-if="showLabel"

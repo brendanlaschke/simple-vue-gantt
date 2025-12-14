@@ -19,35 +19,17 @@
 
         <div class="control">
           <label for="barHeight">Bar Height (px)</label>
-          <input
-            id="barHeight"
-            v-model.number="barHeight"
-            type="number"
-            min="20"
-            max="60"
-          />
+          <input id="barHeight" v-model.number="barHeight" type="number" min="20" max="60" />
         </div>
 
         <div class="control">
           <label for="barPadding">Vertical Spacing (px)</label>
-          <input
-            id="barPadding"
-            v-model.number="barPadding"
-            type="number"
-            min="0"
-            max="100"
-          />
+          <input id="barPadding" v-model.number="barPadding" type="number" min="0" max="100" />
         </div>
 
         <div class="control">
           <label for="columnWidth">Column Width (px)</label>
-          <input
-            id="columnWidth"
-            v-model.number="columnWidth"
-            type="number"
-            min="20"
-            max="100"
-          />
+          <input id="columnWidth" v-model.number="columnWidth" type="number" min="20" max="100" />
         </div>
 
         <div class="control">
@@ -103,12 +85,12 @@
     </div>
 
     <div class="chart-container">
-      <GanttChart 
-        v-model:tasks="tasks" 
+      <GanttChart
+        v-model:tasks="tasks"
         :milestones="milestones"
-        :projects="projects" 
+        :projects="projects"
         :swimlanes="swimlanes"
-        :options="options" 
+        :options="options"
         @task:update="onTaskUpdate"
         @task:move="onTaskMove"
         @task:resize="onTaskResize"
@@ -356,7 +338,7 @@ const formatDate = (date: Date) => {
 const onTaskUpdate = (taskId: string, updates: { start?: Date; end?: Date }) => {
   const task = tasks.value.find(t => t.id === taskId)
   if (!task) return
-  
+
   const details = []
   if (updates.start) {
     details.push(`Start: ${formatDate(updates.start)}`)
@@ -364,13 +346,13 @@ const onTaskUpdate = (taskId: string, updates: { start?: Date; end?: Date }) => 
   if (updates.end) {
     details.push(`End: ${formatDate(updates.end)}`)
   }
-  
+
   eventLog.value.unshift({
     time: new Date().toLocaleTimeString(),
     type: 'Task Update',
     details: `${task.name} - ${details.join(', ')}`
   })
-  
+
   // Keep only last 10 events
   if (eventLog.value.length > 10) {
     eventLog.value = eventLog.value.slice(0, 10)
@@ -380,13 +362,13 @@ const onTaskUpdate = (taskId: string, updates: { start?: Date; end?: Date }) => 
 const onTaskMove = (taskId: string, start: Date, end: Date) => {
   const task = tasks.value.find(t => t.id === taskId)
   if (!task) return
-  
+
   eventLog.value.unshift({
     time: new Date().toLocaleTimeString(),
     type: 'Task Moved',
     details: `${task.name} - ${formatDate(start)} to ${formatDate(end)}`
   })
-  
+
   // Keep only last 10 events
   if (eventLog.value.length > 10) {
     eventLog.value = eventLog.value.slice(0, 10)
@@ -396,13 +378,13 @@ const onTaskMove = (taskId: string, start: Date, end: Date) => {
 const onTaskResize = (taskId: string, start: Date, end: Date) => {
   const task = tasks.value.find(t => t.id === taskId)
   if (!task) return
-  
+
   eventLog.value.unshift({
     time: new Date().toLocaleTimeString(),
     type: 'Task Resized',
     details: `${task.name} - ${formatDate(start)} to ${formatDate(end)}`
   })
-  
+
   // Keep only last 10 events
   if (eventLog.value.length > 10) {
     eventLog.value = eventLog.value.slice(0, 10)
@@ -412,7 +394,7 @@ const onTaskResize = (taskId: string, start: Date, end: Date) => {
 const onClick = (_event: MouseEvent, type: 'task' | 'milestone' | 'summary', data: GanttTask | GanttMilestone | GanttProject) => {
   let name = ''
   let details = ''
-  
+
   if (type === 'task') {
     const task = data as GanttTask
     name = task.name
@@ -426,13 +408,13 @@ const onClick = (_event: MouseEvent, type: 'task' | 'milestone' | 'summary', dat
     name = project.name
     details = 'Project Summary'
   }
-  
+
   eventLog.value.unshift({
     time: new Date().toLocaleTimeString(),
     type: `${type.charAt(0).toUpperCase() + type.slice(1)} Clicked`,
     details: `${name} - ${details}`
   })
-  
+
   // Keep only last 10 events
   if (eventLog.value.length > 10) {
     eventLog.value = eventLog.value.slice(0, 10)

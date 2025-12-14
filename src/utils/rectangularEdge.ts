@@ -46,8 +46,7 @@ export function createRectangularPath(
     waypoints.push({ x: startX + rightOffset, y: startY });
 
     // Add vertical transition point
-    const transitionY =
-      startY + (endY > startY ? 1 : -1) * Math.min(verticalDistance / 2, 30);
+    const transitionY = startY + (endY > startY ? 1 : -1) * Math.min(verticalDistance / 2, 30);
     waypoints.push({ x: startX + rightOffset, y: transitionY });
 
     // Go to end X position

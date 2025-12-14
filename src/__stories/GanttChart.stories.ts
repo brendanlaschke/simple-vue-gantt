@@ -1,11 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/vue3";
 import GanttChart from "../components/GanttChart.vue";
-import type {
-  GanttTask,
-  GanttMilestone,
-  GanttProject,
-  GanttSwimlane,
-} from "../types";
+import type { GanttTask, GanttMilestone, GanttProject, GanttSwimlane } from "../types";
 
 const meta: Meta<typeof GanttChart> = {
   title: "Components/GanttChart",
