@@ -314,18 +314,18 @@ const {
 )
 
 // Extract options with defaults
-const barHeight = computed(() => options.value.barHeight || 30)
-const columnWidth = computed(() => options.value.columnWidth || 40)
-const barPadding = computed(() => options.value.barPadding || 4)
+const barHeight = computed(() => options.value.barHeight ?? 30)
+const columnWidth = computed(() => options.value.columnWidth ?? 40)
+const barPadding = computed(() => options.value.barPadding ?? 4)
 const showGrid = computed(() => options.value.showGrid !== false)
 const showToday = computed(() => options.value.showToday !== false)
 const showDependencies = computed(() => options.value.showDependencies !== false)
-const gridColor = computed(() => options.value.gridColor || '#e5e7eb')
-const todayColor = computed(() => options.value.todayColor || '#ef4444')
-const enableProjectGrouping = computed(() => options.value.enableProjectGrouping || false)
-const enableSwimlanes = computed(() => options.value.enableSwimlanes || false)
-const projectHeaderHeight = computed(() => options.value.projectHeaderHeight || 35)
-const milestoneSize = computed(() => options.value.milestoneSize || 16)
+const gridColor = computed(() => options.value.gridColor ?? '#e5e7eb')
+const todayColor = computed(() => options.value.todayColor ?? '#ef4444')
+const enableProjectGrouping = computed(() => options.value.enableProjectGrouping ?? false)
+const enableSwimlanes = computed(() => options.value.enableSwimlanes ?? false)
+const projectHeaderHeight = computed(() => options.value.projectHeaderHeight ?? 35)
+const milestoneSize = computed(() => options.value.milestoneSize ?? 16)
 const showMilestoneLabels = computed(() => options.value.showMilestoneLabels !== false)
 const hideOrphanDependencies = computed(() => options.value.hideOrphanDependencies !== false)
 const showProjectSummary = computed(() => options.value.showProjectSummary !== false)
@@ -703,6 +703,7 @@ const handleChartScroll = (instance: OverlayScrollbars) => {
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  z-index: 0;
 }
 
 .vue-gantt__sidebar-scroll {
@@ -713,6 +714,7 @@ const handleChartScroll = (instance: OverlayScrollbars) => {
 .vue-gantt__sidebar-content {
   position: relative;
   min-height: min-content;
+  overflow: hidden;
 }
 
 .vue-gantt__chart-column {
@@ -721,6 +723,7 @@ const handleChartScroll = (instance: OverlayScrollbars) => {
   flex-direction: column;
   overflow: hidden;
   min-width: 0;
+  z-index: 1;
 }
 
 .vue-gantt__header-wrapper {

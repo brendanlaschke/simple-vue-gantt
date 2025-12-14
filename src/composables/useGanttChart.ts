@@ -1221,9 +1221,13 @@ export function useGanttChart(
       );
       const isExpanded = projectStates.value.get(project.id) ?? true;
 
+      // Store the project header Y position for milestones
+      const projectHeaderY = currentY;
+
       // Add space for project header
       currentY += mergedOptions.value.projectHeaderHeight;
 
+      // Position all milestones in the first line of the project (at project header Y)
       projectMilestones.forEach((milestone: GanttMilestone) => {
         const daysDiff = getDaysDiff(chartStartDate.value, milestone.date);
 
@@ -1257,13 +1261,9 @@ export function useGanttChart(
         rendered.push({
           ...milestone,
           x: Math.max(0, x),
-          y: currentY,
+          y: projectHeaderY,
           isVisible: isExpanded,
         });
-
-        if (isExpanded) {
-          currentY += barHeight.value + barPadding.value;
-        }
       });
 
       // Account for project tasks in height calculation

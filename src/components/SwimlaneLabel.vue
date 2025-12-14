@@ -24,9 +24,6 @@ defineProps<Props>()
 
 <style scoped>
 .swimlane-label {
-  position: absolute;
-  left: 0;
-  right: 0;
   display: flex;
   align-items: center;
   padding: 0 16px;
