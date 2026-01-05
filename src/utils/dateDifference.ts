@@ -33,3 +33,11 @@ export function getMonthsDiff(start: Date, end: Date): number {
 export function getYearsDiff(start: Date, end: Date): number {
   return end.getFullYear() - start.getFullYear();
 }
+
+/**
+ * Get the difference in minutes between two dates
+ */
+export function getMinutesDiff(start: Date, end: Date): number {
+  const msPerMinute = 1000 * 60;
+  return Math.round((end.getTime() - start.getTime()) / msPerMinute);
+}

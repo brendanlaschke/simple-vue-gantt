@@ -75,7 +75,7 @@ export interface GanttSwimlane {
 /**
  * View mode for the Gantt chart timeline
  */
-export type ViewMode = "hour" | "day" | "week" | "month" | "year";
+export type ViewMode = "10min" | "15min" | "hour" | "day" | "week" | "month" | "year";
 
 /**
  * Configuration options for the Gantt chart

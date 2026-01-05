@@ -20,6 +20,13 @@ export function getWeekNumber(date: Date): number {
  */
 export function formatDate(date: Date, viewMode: ViewMode): string {
   switch (viewMode) {
+    case "10min":
+    case "15min":
+      return date.toLocaleTimeString("en-US", {
+        hour: "numeric",
+        minute: "2-digit",
+        hour12: false,
+      });
     case "hour":
       return date.toLocaleTimeString("en-US", {
         hour: "numeric",
@@ -48,6 +55,12 @@ export function formatDate(date: Date, viewMode: ViewMode): string {
  */
 export function formatPrimaryLabel(date: Date, viewMode: ViewMode): string {
   switch (viewMode) {
+    case "10min":
+    case "15min":
+      return date.toLocaleTimeString("en-US", {
+        hour: "numeric",
+        hour12: false,
+      }) + ":00";
     case "hour":
       return date.toLocaleDateString("en-US", {
         month: "short",
@@ -73,6 +86,13 @@ export function formatPrimaryLabel(date: Date, viewMode: ViewMode): string {
  */
 export function formatSecondaryLabel(date: Date, viewMode: ViewMode): string {
   switch (viewMode) {
+    case "10min":
+    case "15min":
+      return date.toLocaleTimeString("en-US", {
+        hour: "numeric",
+        minute: "2-digit",
+        hour12: false,
+      });
     case "hour":
       return date.toLocaleTimeString("en-US", {
         hour: "numeric",

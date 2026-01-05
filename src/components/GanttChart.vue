@@ -563,7 +563,7 @@ const dependencyArrows = computed<Arrow[]>(() => {
 // Check if we should use two-row headers
 const useTwoRowHeaders = computed(() => {
   const mode = options.value.viewMode || 'day'
-  return mode === 'hour' || mode === 'day' || mode === 'week' || mode === 'month'
+  return mode === '10min' || mode === '15min' || mode === 'hour' || mode === 'day' || mode === 'week' || mode === 'month'
 })
 
 // Group time columns by primary periods for two-row headers

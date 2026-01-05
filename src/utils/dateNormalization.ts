@@ -51,3 +51,23 @@ export function startOfHour(date: Date): Date {
   result.setMinutes(0, 0, 0);
   return result;
 }
+
+/**
+ * Get the start of 10-minute interval for a given date
+ */
+export function startOf10Minutes(date: Date): Date {
+  const result = new Date(date);
+  const minutes = result.getMinutes();
+  result.setMinutes(Math.floor(minutes / 10) * 10, 0, 0);
+  return result;
+}
+
+/**
+ * Get the start of 15-minute interval for a given date
+ */
+export function startOf15Minutes(date: Date): Date {
+  const result = new Date(date);
+  const minutes = result.getMinutes();
+  result.setMinutes(Math.floor(minutes / 15) * 15, 0, 0);
+  return result;
+}

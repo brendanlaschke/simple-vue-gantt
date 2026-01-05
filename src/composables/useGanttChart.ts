@@ -14,11 +14,13 @@ import type {
 } from "@/types";
 import { getColumnCount, getColumnDate } from "@/utils/columnCalculations";
 import { isPrimaryPeriodStart } from "@/utils/dateComparison";
-import { getDaysDiff, getHoursDiff, getMonthsDiff, getYearsDiff } from "@/utils/dateDifference";
+import { getDaysDiff, getHoursDiff, getMinutesDiff, getMonthsDiff, getYearsDiff } from "@/utils/dateDifference";
 import { formatDate, formatPrimaryLabel, formatSecondaryLabel } from "@/utils/dateFormatting";
 import {
   startOfDay,
   startOfHour,
+  startOf10Minutes,
+  startOf15Minutes,
   startOfWeek,
   startOfMonth,
   startOfYear,
@@ -171,6 +173,20 @@ export function useGanttChart(
 
         // Calculate x position and width based on view mode
         switch (viewMode.value) {
+          case "10min": {
+            const startMinutes = getMinutesDiff(chartStartDate.value, projectStart);
+            const durationMinutes = getMinutesDiff(projectStart, projectEnd);
+            projectX = (startMinutes / 10) * columnWidth.value;
+            projectWidth = (durationMinutes / 10) * columnWidth.value;
+            break;
+          }
+          case "15min": {
+            const startMinutes = getMinutesDiff(chartStartDate.value, projectStart);
+            const durationMinutes = getMinutesDiff(projectStart, projectEnd);
+            projectX = (startMinutes / 15) * columnWidth.value;
+            projectWidth = (durationMinutes / 15) * columnWidth.value;
+            break;
+          }
           case "hour": {
             const startHours = getHoursDiff(chartStartDate.value, projectStart);
             const durationHours = getHoursDiff(projectStart, projectEnd);
@@ -250,6 +266,20 @@ export function useGanttChart(
               let width: number;
 
               switch (viewMode.value) {
+                case "10min": {
+                  const startMinutes = getMinutesDiff(chartStartDate.value, task.start);
+                  const durationMinutes = getMinutesDiff(task.start, task.end);
+                  x = (startMinutes / 10) * columnWidth.value;
+                  width = (durationMinutes / 10) * columnWidth.value;
+                  break;
+                }
+                case "15min": {
+                  const startMinutes = getMinutesDiff(chartStartDate.value, task.start);
+                  const durationMinutes = getMinutesDiff(task.start, task.end);
+                  x = (startMinutes / 15) * columnWidth.value;
+                  width = (durationMinutes / 15) * columnWidth.value;
+                  break;
+                }
                 case "hour": {
                   const startHours = getHoursDiff(chartStartDate.value, task.start);
                   const durationHours = getHoursDiff(task.start, task.end);
@@ -351,6 +381,20 @@ export function useGanttChart(
               let width: number;
 
               switch (viewMode.value) {
+                case "10min": {
+                  const startMinutes = getMinutesDiff(chartStartDate.value, task.start);
+                  const durationMinutes = getMinutesDiff(task.start, task.end);
+                  x = (startMinutes / 10) * columnWidth.value;
+                  width = (durationMinutes / 10) * columnWidth.value;
+                  break;
+                }
+                case "15min": {
+                  const startMinutes = getMinutesDiff(chartStartDate.value, task.start);
+                  const durationMinutes = getMinutesDiff(task.start, task.end);
+                  x = (startMinutes / 15) * columnWidth.value;
+                  width = (durationMinutes / 15) * columnWidth.value;
+                  break;
+                }
                 case "hour": {
                   const startHours = getHoursDiff(chartStartDate.value, task.start);
                   const durationHours = getHoursDiff(task.start, task.end);
@@ -426,6 +470,20 @@ export function useGanttChart(
           let width: number;
 
           switch (viewMode.value) {
+            case "10min": {
+              const startMinutes = getMinutesDiff(chartStartDate.value, task.start);
+              const durationMinutes = getMinutesDiff(task.start, task.end);
+              x = (startMinutes / 10) * columnWidth.value;
+              width = (durationMinutes / 10) * columnWidth.value;
+              break;
+            }
+            case "15min": {
+              const startMinutes = getMinutesDiff(chartStartDate.value, task.start);
+              const durationMinutes = getMinutesDiff(task.start, task.end);
+              x = (startMinutes / 15) * columnWidth.value;
+              width = (durationMinutes / 15) * columnWidth.value;
+              break;
+            }
             case "hour": {
               const startHours = getHoursDiff(chartStartDate.value, task.start);
               const durationHours = getHoursDiff(task.start, task.end);
@@ -497,6 +555,20 @@ export function useGanttChart(
         let width: number;
 
         switch (viewMode.value) {
+          case "10min": {
+            const startMinutes = getMinutesDiff(chartStartDate.value, task.start);
+            const durationMinutes = getMinutesDiff(task.start, task.end);
+            x = (startMinutes / 10) * columnWidth.value;
+            width = (durationMinutes / 10) * columnWidth.value;
+            break;
+          }
+          case "15min": {
+            const startMinutes = getMinutesDiff(chartStartDate.value, task.start);
+            const durationMinutes = getMinutesDiff(task.start, task.end);
+            x = (startMinutes / 15) * columnWidth.value;
+            width = (durationMinutes / 15) * columnWidth.value;
+            break;
+          }
           case "hour": {
             const startHours = getHoursDiff(chartStartDate.value, task.start);
             const durationHours = getHoursDiff(task.start, task.end);
@@ -623,6 +695,20 @@ export function useGanttChart(
               let width: number;
 
               switch (viewMode.value) {
+                case "10min": {
+                  const startMinutes = getMinutesDiff(chartStartDate.value, task.start);
+                  const durationMinutes = getMinutesDiff(task.start, task.end);
+                  x = (startMinutes / 10) * columnWidth.value;
+                  width = (durationMinutes / 10) * columnWidth.value;
+                  break;
+                }
+                case "15min": {
+                  const startMinutes = getMinutesDiff(chartStartDate.value, task.start);
+                  const durationMinutes = getMinutesDiff(task.start, task.end);
+                  x = (startMinutes / 15) * columnWidth.value;
+                  width = (durationMinutes / 15) * columnWidth.value;
+                  break;
+                }
                 case "hour": {
                   const startHours = getHoursDiff(chartStartDate.value, task.start);
                   const durationHours = getHoursDiff(task.start, task.end);
@@ -726,6 +812,20 @@ export function useGanttChart(
           let width: number;
 
           switch (viewMode.value) {
+            case "10min": {
+              const startMinutes = getMinutesDiff(chartStartDate.value, task.start);
+              const durationMinutes = getMinutesDiff(task.start, task.end);
+              x = (startMinutes / 10) * columnWidth.value;
+              width = (durationMinutes / 10) * columnWidth.value;
+              break;
+            }
+            case "15min": {
+              const startMinutes = getMinutesDiff(chartStartDate.value, task.start);
+              const durationMinutes = getMinutesDiff(task.start, task.end);
+              x = (startMinutes / 15) * columnWidth.value;
+              width = (durationMinutes / 15) * columnWidth.value;
+              break;
+            }
             case "hour": {
               const startHours = getHoursDiff(chartStartDate.value, task.start);
               const durationHours = getHoursDiff(task.start, task.end);
@@ -815,6 +915,20 @@ export function useGanttChart(
         let width: number;
 
         switch (viewMode.value) {
+          case "10min": {
+            const startMinutes = getMinutesDiff(chartStartDate.value, task.start);
+            const durationMinutes = getMinutesDiff(task.start, task.end);
+            x = (startMinutes / 10) * columnWidth.value;
+            width = (durationMinutes / 10) * columnWidth.value;
+            break;
+          }
+          case "15min": {
+            const startMinutes = getMinutesDiff(chartStartDate.value, task.start);
+            const durationMinutes = getMinutesDiff(task.start, task.end);
+            x = (startMinutes / 15) * columnWidth.value;
+            width = (durationMinutes / 15) * columnWidth.value;
+            break;
+          }
           case "hour": {
             const startHours = getHoursDiff(chartStartDate.value, task.start);
             const durationHours = getHoursDiff(task.start, task.end);
@@ -896,6 +1010,20 @@ export function useGanttChart(
         let width: number;
 
         switch (viewMode.value) {
+          case "10min": {
+            const startMinutes = getMinutesDiff(chartStartDate.value, task.start);
+            const durationMinutes = getMinutesDiff(task.start, task.end);
+            x = (startMinutes / 10) * columnWidth.value;
+            width = (durationMinutes / 10) * columnWidth.value;
+            break;
+          }
+          case "15min": {
+            const startMinutes = getMinutesDiff(chartStartDate.value, task.start);
+            const durationMinutes = getMinutesDiff(task.start, task.end);
+            x = (startMinutes / 15) * columnWidth.value;
+            width = (durationMinutes / 15) * columnWidth.value;
+            break;
+          }
           case "hour": {
             const startHours = getHoursDiff(chartStartDate.value, task.start);
             const durationHours = getHoursDiff(task.start, task.end);
@@ -959,6 +1087,20 @@ export function useGanttChart(
         let width: number;
 
         switch (viewMode.value) {
+          case "10min": {
+            const startMinutes = getMinutesDiff(chartStartDate.value, task.start);
+            const durationMinutes = getMinutesDiff(task.start, task.end);
+            x = (startMinutes / 10) * columnWidth.value;
+            width = (durationMinutes / 10) * columnWidth.value;
+            break;
+          }
+          case "15min": {
+            const startMinutes = getMinutesDiff(chartStartDate.value, task.start);
+            const durationMinutes = getMinutesDiff(task.start, task.end);
+            x = (startMinutes / 15) * columnWidth.value;
+            width = (durationMinutes / 15) * columnWidth.value;
+            break;
+          }
           case "hour": {
             const startHours = getHoursDiff(chartStartDate.value, task.start);
             const durationHours = getHoursDiff(task.start, task.end);
@@ -1022,6 +1164,20 @@ export function useGanttChart(
       let width: number;
 
       switch (viewMode.value) {
+        case "10min": {
+          const startMinutes = getMinutesDiff(chartStartDate.value, task.start);
+          const durationMinutes = getMinutesDiff(task.start, task.end);
+          x = (startMinutes / 10) * columnWidth.value;
+          width = (durationMinutes / 10) * columnWidth.value;
+          break;
+        }
+        case "15min": {
+          const startMinutes = getMinutesDiff(chartStartDate.value, task.start);
+          const durationMinutes = getMinutesDiff(task.start, task.end);
+          x = (startMinutes / 15) * columnWidth.value;
+          width = (durationMinutes / 15) * columnWidth.value;
+          break;
+        }
         case "hour": {
           const startHours = getHoursDiff(chartStartDate.value, task.start);
           const durationHours = getHoursDiff(task.start, task.end);
@@ -1081,6 +1237,16 @@ export function useGanttChart(
 
         let x: number;
         switch (viewMode.value) {
+          case "10min": {
+            const minutes = getMinutesDiff(chartStartDate.value, milestone.date);
+            x = (minutes / 10) * columnWidth.value;
+            break;
+          }
+          case "15min": {
+            const minutes = getMinutesDiff(chartStartDate.value, milestone.date);
+            x = (minutes / 15) * columnWidth.value;
+            break;
+          }
           case "hour": {
             const hours = getHoursDiff(chartStartDate.value, milestone.date);
             x = hours * columnWidth.value;
@@ -1135,6 +1301,16 @@ export function useGanttChart(
 
         let x: number;
         switch (viewMode.value) {
+          case "10min": {
+            const minutes = getMinutesDiff(chartStartDate.value, milestone.date);
+            x = (minutes / 10) * columnWidth.value;
+            break;
+          }
+          case "15min": {
+            const minutes = getMinutesDiff(chartStartDate.value, milestone.date);
+            x = (minutes / 15) * columnWidth.value;
+            break;
+          }
           case "hour": {
             const hours = getHoursDiff(chartStartDate.value, milestone.date);
             x = hours * columnWidth.value;
@@ -1182,6 +1358,16 @@ export function useGanttChart(
 
       let x: number;
       switch (viewMode.value) {
+        case "10min": {
+          const minutes = getMinutesDiff(chartStartDate.value, milestone.date);
+          x = (minutes / 10) * columnWidth.value;
+          break;
+        }
+        case "15min": {
+          const minutes = getMinutesDiff(chartStartDate.value, milestone.date);
+          x = (minutes / 15) * columnWidth.value;
+          break;
+        }
         case "hour": {
           const hours = getHoursDiff(chartStartDate.value, milestone.date);
           x = hours * columnWidth.value;
@@ -1310,6 +1496,10 @@ export function useGanttChart(
  */
 function getViewModeStartDate(date: Date, viewMode: ViewMode): Date {
   switch (viewMode) {
+    case "10min":
+      return startOf10Minutes(date);
+    case "15min":
+      return startOf15Minutes(date);
     case "hour":
       return startOfHour(date);
     case "day":

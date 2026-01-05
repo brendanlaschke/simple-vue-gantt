@@ -1,6 +1,6 @@
 import type { ViewMode } from "@/types";
-import { getDaysDiff } from "./dateDifference";
-import { addDays, addHours, addMonths, addYears } from "./dateManipulation";
+import { getDaysDiff, getMinutesDiff } from "./dateDifference";
+import { addDays, addHours, addMinutes, addMonths, addYears } from "./dateManipulation";
 
 /**
  * Timeline column calculation utilities
@@ -11,6 +11,14 @@ import { addDays, addHours, addMonths, addYears } from "./dateManipulation";
  */
 export function getColumnCount(start: Date, end: Date, viewMode: ViewMode): number {
   switch (viewMode) {
+    case "10min": {
+      const minutes = getMinutesDiff(start, end);
+      return Math.ceil(minutes / 10) + 1;
+    }
+    case "15min": {
+      const minutes = getMinutesDiff(start, end);
+      return Math.ceil(minutes / 15) + 1;
+    }
     case "hour": {
       const msPerHour = 1000 * 60 * 60;
       return Math.ceil((end.getTime() - start.getTime()) / msPerHour) + 1;
@@ -37,6 +45,10 @@ export function getColumnCount(start: Date, end: Date, viewMode: ViewMode): numb
  */
 export function getColumnDate(startDate: Date, index: number, viewMode: ViewMode): Date {
   switch (viewMode) {
+    case "10min":
+      return addMinutes(startDate, index * 10);
+    case "15min":
+      return addMinutes(startDate, index * 15);
     case "hour":
       return addHours(startDate, index);
     case "day":

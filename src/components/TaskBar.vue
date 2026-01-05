@@ -217,6 +217,10 @@ const getOffsetMilliseconds = (columns: number): number => {
   const mode = props.viewMode || 'day'
 
   switch (mode) {
+    case '10min':
+      return columns * 10 * 60 * 1000
+    case '15min':
+      return columns * 15 * 60 * 1000
     case 'hour':
       return columns * 60 * 60 * 1000
     case 'day':

@@ -37,3 +37,12 @@ export function addHours(date: Date, hours: number): Date {
   result.setHours(result.getHours() + hours);
   return result;
 }
+
+/**
+ * Add minutes to a date
+ */
+export function addMinutes(date: Date, minutes: number): Date {
+  const result = new Date(date);
+  result.setMinutes(result.getMinutes() + minutes);
+  return result;
+}

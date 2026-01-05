@@ -9,6 +9,8 @@
         <div class="control">
           <label for="viewMode">View Mode</label>
           <select id="viewMode" v-model="viewMode">
+            <option value="10min">10 Minutes</option>
+            <option value="15min">15 Minutes</option>
             <option value="hour">Hour</option>
             <option value="day">Day</option>
             <option value="week">Week</option>

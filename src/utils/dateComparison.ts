@@ -20,6 +20,10 @@ export function isSameDay(date1: Date, date2: Date): boolean {
  */
 export function isPrimaryPeriodStart(date: Date, viewMode: ViewMode): boolean {
   switch (viewMode) {
+    case "10min":
+    case "15min":
+      // Start of a new hour
+      return date.getMinutes() === 0;
     case "hour":
       // Start of a new day
       return date.getHours() === 0;
