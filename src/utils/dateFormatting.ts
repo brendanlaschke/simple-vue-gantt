@@ -57,10 +57,12 @@ export function formatPrimaryLabel(date: Date, viewMode: ViewMode): string {
   switch (viewMode) {
     case "10min":
     case "15min":
-      return date.toLocaleTimeString("en-US", {
-        hour: "numeric",
-        hour12: false,
-      }) + ":00";
+      return (
+        date.toLocaleTimeString("en-US", {
+          hour: "numeric",
+          hour12: false,
+        }) + ":00"
+      );
     case "hour":
       return date.toLocaleDateString("en-US", {
         month: "short",

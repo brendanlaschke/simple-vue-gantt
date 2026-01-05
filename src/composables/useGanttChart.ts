@@ -14,7 +14,13 @@ import type {
 } from "@/types";
 import { getColumnCount, getColumnDate } from "@/utils/columnCalculations";
 import { isPrimaryPeriodStart } from "@/utils/dateComparison";
-import { getDaysDiff, getHoursDiff, getMinutesDiff, getMonthsDiff, getYearsDiff } from "@/utils/dateDifference";
+import {
+  getDaysDiff,
+  getHoursDiff,
+  getMinutesDiff,
+  getMonthsDiff,
+  getYearsDiff,
+} from "@/utils/dateDifference";
 import { formatDate, formatPrimaryLabel, formatSecondaryLabel } from "@/utils/dateFormatting";
 import {
   startOfDay,
