@@ -553,6 +553,154 @@ export const WithMilestones: Story = {
   },
 };
 
+// With Milestones and Project Grouping
+const projectMilestoneTasks: GanttTask[] = [
+  // Planning & Requirements Project
+  {
+    id: "1",
+    name: "Project Charter",
+    start: new Date("2024-10-01"),
+    end: new Date("2024-10-08"),
+    progress: 100,
+    color: "#10b981",
+    projectId: "project-1",
+  },
+  {
+    id: "2",
+    name: "Requirements Analysis",
+    start: new Date("2024-10-05"),
+    end: new Date("2024-10-20"),
+    progress: 100,
+    color: "#10b981",
+    projectId: "project-1",
+  },
+  // Frontend Development Project
+  {
+    id: "3",
+    name: "UI/UX Design",
+    start: new Date("2024-10-15"),
+    end: new Date("2024-11-05"),
+    progress: 90,
+    color: "#3b82f6",
+    projectId: "project-2",
+  },
+  {
+    id: "4",
+    name: "Component Development",
+    start: new Date("2024-10-25"),
+    end: new Date("2024-11-20"),
+    progress: 70,
+    color: "#3b82f6",
+    projectId: "project-2",
+  },
+  {
+    id: "5",
+    name: "Integration",
+    start: new Date("2024-11-10"),
+    end: new Date("2024-11-30"),
+    progress: 50,
+    color: "#3b82f6",
+    projectId: "project-2",
+  },
+  // Backend Development Project
+  {
+    id: "6",
+    name: "API Design",
+    start: new Date("2024-10-20"),
+    end: new Date("2024-11-05"),
+    progress: 95,
+    color: "#f59e0b",
+    projectId: "project-3",
+  },
+  {
+    id: "7",
+    name: "Database Implementation",
+    start: new Date("2024-10-28"),
+    end: new Date("2024-11-18"),
+    progress: 75,
+    color: "#f59e0b",
+    projectId: "project-3",
+  },
+  {
+    id: "8",
+    name: "Service Layer",
+    start: new Date("2024-11-08"),
+    end: new Date("2024-12-05"),
+    progress: 60,
+    color: "#f59e0b",
+    projectId: "project-3",
+  },
+];
+
+const projectMilestones: GanttMilestone[] = [
+  // Project 1 Milestones
+  {
+    id: "pm1",
+    name: "Requirements Approved",
+    date: new Date("2024-10-20"),
+    color: "#10b981",
+    projectId: "project-1",
+    dependencies: ["2"],
+  },
+  // Project 2 Milestones
+  {
+    id: "pm2",
+    name: "Design Review",
+    date: new Date("2024-11-05"),
+    color: "#3b82f6",
+    projectId: "project-2",
+    dependencies: ["3"],
+  },
+  {
+    id: "pm3",
+    name: "Frontend Alpha",
+    date: new Date("2024-11-20"),
+    color: "#3b82f6",
+    projectId: "project-2",
+    dependencies: ["4"],
+  },
+  // Project 3 Milestones
+  {
+    id: "pm4",
+    name: "API Spec Complete",
+    date: new Date("2024-11-05"),
+    color: "#f59e0b",
+    projectId: "project-3",
+    dependencies: ["6"],
+  },
+  {
+    id: "pm5",
+    name: "Backend MVP",
+    date: new Date("2024-12-05"),
+    color: "#f59e0b",
+    projectId: "project-3",
+    dependencies: ["8"],
+  },
+];
+
+export const WithMilestonesAndProjectGrouping: Story = {
+  args: {
+    tasks: projectMilestoneTasks,
+    milestones: projectMilestones,
+    projects: projects,
+    options: {
+      viewMode: "day",
+      enableProjectGrouping: true,
+      showMilestoneLabels: true,
+      showDependencies: true,
+      showProjectSummary: true,
+    },
+  },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "Demonstrates milestones within project grouping. Each project has its own milestones that appear on the project header row. Milestones remain visible even when projects are collapsed.",
+      },
+    },
+  },
+};
+
 // Generate 1000 tasks for performance testing
 const generate1000Tasks = (): GanttTask[] => {
   const tasks: GanttTask[] = [];

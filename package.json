@@ -1,6 +1,6 @@
 {
   "name": "@brendanlaschke/vue-simple-gantt",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "description": "A flexible Gantt chart library for Vue 3 with TypeScript",
   "repository": {
     "type": "git",
@@ -50,21 +50,21 @@
   },
   "devDependencies": {
     "@chromatic-com/storybook": "^4.1.3",
-    "@storybook/addon-vitest": "^10.1.8",
-    "@storybook/vue3-vite": "^10.1.8",
+    "@storybook/addon-vitest": "^10.2.1",
+    "@storybook/vue3-vite": "^10.2.1",
     "@vitejs/plugin-vue": "^6.0.3",
-    "@vitest/browser-playwright": "^4.0.5",
-    "@vitest/coverage-v8": "^4.0.5",
-    "oxfmt": "^0.17.0",
-    "oxlint": "^1.32.0",
-    "playwright": "^1.57.0",
-    "storybook": "^10.1.8",
+    "@vitest/browser-playwright": "^4.0.18",
+    "@vitest/coverage-v8": "^4.0.18",
+    "oxfmt": "^0.27.0",
+    "oxlint": "^1.42.0",
+    "playwright": "^1.58.0",
+    "storybook": "^10.2.1",
     "typescript": "^5.9.3",
-    "vite": "^7.2.7",
+    "vite": "^7.3.1",
     "vite-plugin-dts": "^4.5.4",
-    "vitest": "^4.0.5",
-    "vue": "^3.5.25",
-    "vue-tsc": "^3.1.8"
+    "vitest": "^4.0.18",
+    "vue": "^3.5.27",
+    "vue-tsc": "^3.2.4"
   },
   "sideEffects": [
     "*.css"

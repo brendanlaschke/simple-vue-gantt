@@ -40,6 +40,8 @@ export interface GanttMilestone {
   color?: string;
   /** Optional project ID this milestone belongs to */
   projectId?: string;
+  /** Optional swim lane ID this milestone belongs to */
+  swimlaneId?: string;
   /** Optional array of task/milestone IDs this milestone depends on */
   dependencies?: string[];
   /** Optional metadata that can be attached to the milestone */

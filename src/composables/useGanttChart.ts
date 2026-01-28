@@ -1236,180 +1236,186 @@ export function useGanttChart(
    * Calculate milestone positions
    */
   const renderedMilestones = computed<RenderedMilestone[]>(() => {
-    if (!mergedOptions.value.enableProjectGrouping) {
-      // Simple mode - position milestones based on their index
-      return milestones.value.map((milestone: GanttMilestone, index: number) => {
-        const daysDiff = getDaysDiff(chartStartDate.value, milestone.date);
+    // Helper function to calculate X position for a milestone
+    const calculateX = (date: Date): number => {
+      const daysDiff = getDaysDiff(chartStartDate.value, date);
 
-        let x: number;
-        switch (viewMode.value) {
-          case "10min": {
-            const minutes = getMinutesDiff(chartStartDate.value, milestone.date);
-            x = (minutes / 10) * columnWidth.value;
-            break;
-          }
-          case "15min": {
-            const minutes = getMinutesDiff(chartStartDate.value, milestone.date);
-            x = (minutes / 15) * columnWidth.value;
-            break;
-          }
-          case "hour": {
-            const hours = getHoursDiff(chartStartDate.value, milestone.date);
-            x = hours * columnWidth.value;
-            break;
-          }
-          case "day":
-            x = daysDiff * columnWidth.value;
-            break;
-          case "week":
-            x = (daysDiff / 7) * columnWidth.value;
-            break;
-          case "month": {
-            const months = getMonthsDiff(chartStartDate.value, milestone.date);
-            x = months * columnWidth.value;
-            break;
-          }
-          case "year": {
-            const years = getYearsDiff(chartStartDate.value, milestone.date);
-            x = years * columnWidth.value;
-            break;
-          }
-          default:
-            x = 0;
+      switch (viewMode.value) {
+        case "10min": {
+          const minutes = getMinutesDiff(chartStartDate.value, date);
+          return (minutes / 10) * columnWidth.value;
         }
-
-        return {
-          ...milestone,
-          x: Math.max(0, x),
-          y: index * (barHeight.value + barPadding.value),
-          isVisible: true,
-        };
-      });
-    }
-
-    // Project grouping mode
-    const rendered: RenderedMilestone[] = [];
-    let currentY = 0;
-
-    projects.value.forEach((project) => {
-      const projectMilestones = milestones.value.filter((m) => m.projectId === project.id);
-      const isExpanded = projectStates.value.get(project.id) ?? true;
-
-      // Store the project header Y position for milestones
-      const projectHeaderY = currentY;
-
-      // Add space for project header
-      currentY += mergedOptions.value.projectHeaderHeight;
-
-      // Position all milestones in the first line of the project (at project header Y)
-      projectMilestones.forEach((milestone: GanttMilestone) => {
-        const daysDiff = getDaysDiff(chartStartDate.value, milestone.date);
-
-        let x: number;
-        switch (viewMode.value) {
-          case "10min": {
-            const minutes = getMinutesDiff(chartStartDate.value, milestone.date);
-            x = (minutes / 10) * columnWidth.value;
-            break;
-          }
-          case "15min": {
-            const minutes = getMinutesDiff(chartStartDate.value, milestone.date);
-            x = (minutes / 15) * columnWidth.value;
-            break;
-          }
-          case "hour": {
-            const hours = getHoursDiff(chartStartDate.value, milestone.date);
-            x = hours * columnWidth.value;
-            break;
-          }
-          case "day":
-            x = daysDiff * columnWidth.value;
-            break;
-          case "week":
-            x = (daysDiff / 7) * columnWidth.value;
-            break;
-          case "month": {
-            const months = getMonthsDiff(chartStartDate.value, milestone.date);
-            x = months * columnWidth.value;
-            break;
-          }
-          case "year": {
-            const years = getYearsDiff(chartStartDate.value, milestone.date);
-            x = years * columnWidth.value;
-            break;
-          }
-          default:
-            x = 0;
+        case "15min": {
+          const minutes = getMinutesDiff(chartStartDate.value, date);
+          return (minutes / 15) * columnWidth.value;
         }
+        case "hour": {
+          const hours = getHoursDiff(chartStartDate.value, date);
+          return hours * columnWidth.value;
+        }
+        case "day":
+          return daysDiff * columnWidth.value;
+        case "week":
+          return (daysDiff / 7) * columnWidth.value;
+        case "month": {
+          const months = getMonthsDiff(chartStartDate.value, date);
+          return months * columnWidth.value;
+        }
+        case "year": {
+          const years = getYearsDiff(chartStartDate.value, date);
+          return years * columnWidth.value;
+        }
+        default:
+          return 0;
+      }
+    };
 
-        rendered.push({
-          ...milestone,
-          x: Math.max(0, x),
-          y: projectHeaderY,
-          isVisible: isExpanded,
+    // Swimlane mode with project grouping
+    if (mergedOptions.value.enableSwimlanes && mergedOptions.value.enableProjectGrouping) {
+      const rendered: RenderedMilestone[] = [];
+
+      projects.value.forEach((project) => {
+        const isExpanded = projectStates.value.get(project.id) ?? true;
+
+        swimlanes.value.forEach((swimlane) => {
+          const projectSwimlaneMilestones = milestones.value.filter(
+            (m) => m.projectId === project.id && m.swimlaneId === swimlane.id
+          );
+
+          if (projectSwimlaneMilestones.length === 0) return;
+
+          // Find the rendered swimlane for this project+swimlane combo
+          const renderedSwimlane = renderedSwimlanes.value.find(
+            (rs) => rs.id === `${project.id}-${swimlane.id}`
+          );
+
+          if (!renderedSwimlane) return;
+
+          projectSwimlaneMilestones.forEach((milestone) => {
+            const x = calculateX(milestone.date);
+            rendered.push({
+              ...milestone,
+              x: Math.max(0, x),
+              y: renderedSwimlane.y, // Place at top of swimlane
+              isVisible: isExpanded,
+            });
+          });
         });
       });
 
-      // Account for project tasks in height calculation
-      const projectTasks = tasks.value.filter((t) => t.projectId === project.id);
-      if (isExpanded) {
-        currentY += projectTasks.length * (barHeight.value + barPadding.value);
-      }
-    });
+      // Handle orphan milestones grouped by swimlane
+      swimlanes.value.forEach((swimlane) => {
+        const orphanSwimlaneMilestones = milestones.value.filter(
+          (m) => !m.projectId && m.swimlaneId === swimlane.id
+        );
 
-    // Handle orphan milestones (milestones without a project)
-    const orphanMilestones = milestones.value.filter((m) => !m.projectId);
-    orphanMilestones.forEach((milestone: GanttMilestone) => {
-      const daysDiff = getDaysDiff(chartStartDate.value, milestone.date);
+        if (orphanSwimlaneMilestones.length === 0) return;
 
-      let x: number;
-      switch (viewMode.value) {
-        case "10min": {
-          const minutes = getMinutesDiff(chartStartDate.value, milestone.date);
-          x = (minutes / 10) * columnWidth.value;
-          break;
-        }
-        case "15min": {
-          const minutes = getMinutesDiff(chartStartDate.value, milestone.date);
-          x = (minutes / 15) * columnWidth.value;
-          break;
-        }
-        case "hour": {
-          const hours = getHoursDiff(chartStartDate.value, milestone.date);
-          x = hours * columnWidth.value;
-          break;
-        }
-        case "day":
-          x = daysDiff * columnWidth.value;
-          break;
-        case "week":
-          x = (daysDiff / 7) * columnWidth.value;
-          break;
-        case "month": {
-          const months = getMonthsDiff(chartStartDate.value, milestone.date);
-          x = months * columnWidth.value;
-          break;
-        }
-        case "year": {
-          const years = getYearsDiff(chartStartDate.value, milestone.date);
-          x = years * columnWidth.value;
-          break;
-        }
-        default:
-          x = 0;
-      }
+        const renderedSwimlane = renderedSwimlanes.value.find((rs) => rs.id === swimlane.id);
+        if (!renderedSwimlane) return;
 
-      rendered.push({
-        ...milestone,
-        x: Math.max(0, x),
-        y: currentY,
-        isVisible: true,
+        orphanSwimlaneMilestones.forEach((milestone) => {
+          const x = calculateX(milestone.date);
+          rendered.push({
+            ...milestone,
+            x: Math.max(0, x),
+            y: renderedSwimlane.y, // Place at top of swimlane
+            isVisible: true,
+          });
+        });
       });
 
-      currentY += barHeight.value + barPadding.value;
-    });
+      return rendered;
+    }
 
-    return rendered;
+    // Swimlane mode (without project grouping)
+    if (mergedOptions.value.enableSwimlanes) {
+      const rendered: RenderedMilestone[] = [];
+
+      swimlanes.value.forEach((swimlane) => {
+        const swimlaneMilestones = milestones.value.filter(
+          (m) => m.swimlaneId === swimlane.id
+        );
+
+        if (swimlaneMilestones.length === 0) return;
+
+        const renderedSwimlane = renderedSwimlanes.value.find((rs) => rs.id === swimlane.id);
+        if (!renderedSwimlane) return;
+
+        swimlaneMilestones.forEach((milestone) => {
+          const x = calculateX(milestone.date);
+          rendered.push({
+            ...milestone,
+            x: Math.max(0, x),
+            y: renderedSwimlane.y, // Place at top of swimlane
+            isVisible: true,
+          });
+        });
+      });
+
+      return rendered;
+    }
+
+    // Project grouping mode (without swimlanes)
+    if (mergedOptions.value.enableProjectGrouping) {
+      const rendered: RenderedMilestone[] = [];
+      let currentY = 0;
+
+      projects.value.forEach((project) => {
+        const projectMilestones = milestones.value.filter((m) => m.projectId === project.id);
+        const isExpanded = projectStates.value.get(project.id) ?? true;
+
+        // Store the project header Y position for milestones
+        const projectHeaderY = currentY;
+
+        // Add space for project header
+        currentY += mergedOptions.value.projectHeaderHeight;
+
+        // Position all milestones in the first line of the project (at project header Y)
+        projectMilestones.forEach((milestone: GanttMilestone) => {
+          const x = calculateX(milestone.date);
+          rendered.push({
+            ...milestone,
+            x: Math.max(0, x),
+            y: projectHeaderY,
+            isVisible: true, // Milestones should always be visible on the project header
+          });
+        });
+
+        // Account for project tasks in height calculation
+        const projectTasks = tasks.value.filter((t) => t.projectId === project.id);
+        if (isExpanded) {
+          currentY += projectTasks.length * (barHeight.value + barPadding.value);
+        }
+      });
+
+      // Handle orphan milestones (milestones without a project)
+      const orphanMilestones = milestones.value.filter((m) => !m.projectId);
+      orphanMilestones.forEach((milestone: GanttMilestone) => {
+        const x = calculateX(milestone.date);
+        rendered.push({
+          ...milestone,
+          x: Math.max(0, x),
+          y: currentY,
+          isVisible: true,
+        });
+
+        currentY += barHeight.value + barPadding.value;
+      });
+
+      return rendered;
+    }
+
+    // Simple mode - position milestones based on their index
+    return milestones.value.map((milestone: GanttMilestone, index: number) => {
+      const x = calculateX(milestone.date);
+      return {
+        ...milestone,
+        x: Math.max(0, x),
+        y: index * (barHeight.value + barPadding.value),
+        isVisible: true,
+      };
+    });
   });
 
   /**
