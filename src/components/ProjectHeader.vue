@@ -5,7 +5,7 @@
     @click="$emit('toggle')"
   >
     <span class="project-header__toggle">
-      {{ isExpanded ? '▼' : '▶' }}
+      {{ isExpanded ? "▼" : "▶" }}
     </span>
     <span class="project-header__name">{{ name }}</span>
     <span class="project-header__count">({{ taskCount }})</span>
@@ -14,17 +14,17 @@
 
 <script setup lang="ts">
 interface Props {
-  name: string
-  height: number
-  top: number
-  isExpanded: boolean
-  taskCount: number
+  name: string;
+  height: number;
+  top: number;
+  isExpanded: boolean;
+  taskCount: number;
 }
 
-defineProps<Props>()
+defineProps<Props>();
 defineEmits<{
-  toggle: []
-}>()
+  toggle: [];
+}>();
 </script>
 
 <style scoped>

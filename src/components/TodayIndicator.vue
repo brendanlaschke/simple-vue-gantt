@@ -14,14 +14,14 @@
 
 <script setup lang="ts">
 interface Props {
-  todayX: number | null
-  chartHeight: number
-  todayColor?: string
-  showToday?: boolean
+  todayX: number | null;
+  chartHeight: number;
+  todayColor?: string;
+  showToday?: boolean;
 }
 
 withDefaults(defineProps<Props>(), {
-  todayColor: '#ef4444',
-  showToday: true
-})
+  todayColor: "#ef4444",
+  showToday: true,
+});
 </script>

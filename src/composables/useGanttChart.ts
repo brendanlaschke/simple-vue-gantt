@@ -1333,9 +1333,7 @@ export function useGanttChart(
       const rendered: RenderedMilestone[] = [];
 
       swimlanes.value.forEach((swimlane) => {
-        const swimlaneMilestones = milestones.value.filter(
-          (m) => m.swimlaneId === swimlane.id
-        );
+        const swimlaneMilestones = milestones.value.filter((m) => m.swimlaneId === swimlane.id);
 
         if (swimlaneMilestones.length === 0) return;
 

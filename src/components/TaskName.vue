@@ -11,17 +11,17 @@
 
 <script setup lang="ts">
 interface Props {
-  name: string
-  height: number
-  marginBottom: number
-  isGrouped?: boolean
-  showTooltips?: boolean
+  name: string;
+  height: number;
+  marginBottom: number;
+  isGrouped?: boolean;
+  showTooltips?: boolean;
 }
 
 withDefaults(defineProps<Props>(), {
   isGrouped: false,
-  showTooltips: false
-})
+  showTooltips: false,
+});
 </script>
 
 <style scoped>

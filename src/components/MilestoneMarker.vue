@@ -26,31 +26,31 @@
 </template>
 
 <script setup lang="ts">
-import type { RenderedMilestone } from '@/types'
+import type { RenderedMilestone } from "@/types";
 
 interface Props {
-  milestone: RenderedMilestone
-  barHeight: number
-  milestoneSize: number
-  showLabel?: boolean
+  milestone: RenderedMilestone;
+  barHeight: number;
+  milestoneSize: number;
+  showLabel?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  showLabel: true
-})
+  showLabel: true,
+});
 
 const emit = defineEmits<{
-  'click': [event: MouseEvent, milestoneId: string]
-}>()
+  click: [event: MouseEvent, milestoneId: string];
+}>();
 
 const handleClick = (event: MouseEvent) => {
-  emit('click', event, props.milestone.id)
-}
+  emit("click", event, props.milestone.id);
+};
 
 const getMilestonePath = (x: number, y: number) => {
-  const halfSize = props.milestoneSize / 2
-  return `M ${x},${y - halfSize} L ${x + halfSize},${y} L ${x},${y + halfSize} L ${x - halfSize},${y} Z`
-}
+  const halfSize = props.milestoneSize / 2;
+  return `M ${x},${y - halfSize} L ${x + halfSize},${y} L ${x},${y + halfSize} L ${x - halfSize},${y} Z`;
+};
 </script>
 
 <style scoped>

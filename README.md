@@ -4,16 +4,13 @@
 
 Customizable Vue Gantt chart.
 
-
 ```
 npm i @brendanlaschke/vue-simple-gantt
 ```
 
-
 ## Example
 
 ```vue
-
 <script setup>
 import { GanttChart } from '@brendanlaschke/vue-simple-gantt'
 import { ref } from 'vue'
@@ -196,16 +193,14 @@ const swimlanes = ref<GanttSwimlane[]>([
 </script>
 
 <template>
-    <GanttChart 
-        v-model:tasks="tasks" 
-        :projects="projects" 
-        :swimlanes="swimlanes"
-        :options="options"
-      />
+  <GanttChart
+    v-model:tasks="tasks"
+    :projects="projects"
+    :swimlanes="swimlanes"
+    :options="options"
+  />
 </template>
 ```
-
-
 
 ## License
 

@@ -11,15 +11,15 @@
 
 <script setup lang="ts">
 interface Props {
-  y: number
-  height: number
-  chartWidth: number
-  color?: string
+  y: number;
+  height: number;
+  chartWidth: number;
+  color?: string;
 }
 
 withDefaults(defineProps<Props>(), {
-  color: '#ffffff'
-})
+  color: "#ffffff",
+});
 </script>
 
 <style scoped>

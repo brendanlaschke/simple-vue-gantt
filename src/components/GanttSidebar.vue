@@ -11,9 +11,9 @@
 
 <script setup lang="ts">
 defineProps<{
-  title: string
-  useTwoRowHeaders?: boolean
-}>()
+  title: string;
+  useTwoRowHeaders?: boolean;
+}>();
 </script>
 
 <style scoped>

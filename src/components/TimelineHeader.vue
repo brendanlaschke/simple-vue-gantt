@@ -10,7 +10,7 @@
           class="timeline-header__column timeline-header__column--primary"
           :style="{
             width: `${period.width}px`,
-            left: `${period.x}px`
+            left: `${period.x}px`,
           }"
         >
           {{ period.label }}
@@ -24,7 +24,7 @@
           class="timeline-header__column timeline-header__column--secondary"
           :style="{
             width: `${columnWidth}px`,
-            left: `${column.x}px`
+            left: `${column.x}px`,
           }"
         >
           {{ column.secondaryLabel }}
@@ -40,7 +40,7 @@
         class="timeline-header__column"
         :style="{
           width: `${columnWidth}px`,
-          left: `${column.x}px`
+          left: `${column.x}px`,
         }"
       >
         {{ column.label }}
@@ -50,25 +50,25 @@
 </template>
 
 <script setup lang="ts">
-import type { TimeColumn } from '@/types'
+import type { TimeColumn } from "@/types";
 
 interface PrimaryPeriod {
-  label: string
-  x: number
-  width: number
+  label: string;
+  x: number;
+  width: number;
 }
 
 interface Props {
-  columns: TimeColumn[]
-  columnWidth: number
-  primaryPeriods?: PrimaryPeriod[]
-  useTwoRowHeaders?: boolean
+  columns: TimeColumn[];
+  columnWidth: number;
+  primaryPeriods?: PrimaryPeriod[];
+  useTwoRowHeaders?: boolean;
 }
 
 withDefaults(defineProps<Props>(), {
   primaryPeriods: () => [],
-  useTwoRowHeaders: false
-})
+  useTwoRowHeaders: false,
+});
 </script>
 
 <style scoped>

@@ -14,17 +14,17 @@
 </template>
 
 <script setup lang="ts">
-import type { TimeColumn } from '@/types'
+import type { TimeColumn } from "@/types";
 
 interface Props {
-  columns: TimeColumn[]
-  chartHeight: number
-  gridColor?: string
-  showGrid?: boolean
+  columns: TimeColumn[];
+  chartHeight: number;
+  gridColor?: string;
+  showGrid?: boolean;
 }
 
 withDefaults(defineProps<Props>(), {
-  gridColor: '#e5e7eb',
-  showGrid: true
-})
+  gridColor: "#e5e7eb",
+  showGrid: true,
+});
 </script>

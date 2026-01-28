@@ -16,8 +16,8 @@
 
       <!-- Gradient for a more polished look (optional) -->
       <linearGradient id="arrowGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-        <stop offset="0%" style="stop-color:#94a3b8;stop-opacity:0.8" />
-        <stop offset="100%" style="stop-color:#64748b;stop-opacity:1" />
+        <stop offset="0%" style="stop-color: #94a3b8; stop-opacity: 0.8" />
+        <stop offset="100%" style="stop-color: #64748b; stop-opacity: 1" />
       </linearGradient>
     </defs>
 
@@ -39,23 +39,25 @@
 
 <script setup lang="ts">
 interface Arrow {
-  id: string
-  path: string
+  id: string;
+  path: string;
 }
 
 interface Props {
-  arrows: Arrow[]
-  showDependencies?: boolean
+  arrows: Arrow[];
+  showDependencies?: boolean;
 }
 
 withDefaults(defineProps<Props>(), {
-  showDependencies: true
-})
+  showDependencies: true,
+});
 </script>
 
 <style scoped>
 .dependency-path {
-  transition: stroke-width 0.2s ease, stroke 0.2s ease;
+  transition:
+    stroke-width 0.2s ease,
+    stroke 0.2s ease;
 }
 
 .dependency-path:hover {

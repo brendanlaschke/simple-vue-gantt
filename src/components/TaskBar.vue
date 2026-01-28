@@ -1,7 +1,7 @@
 <template>
   <g
     class="task-bar-group"
-    :class="{ 
+    :class="{
       'task-bar-group--dragging': isDragging,
       'task-bar-group--movable': editPosition,
     }"
@@ -80,163 +80,163 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
-import type { RenderedTask } from '@/types'
+import { ref, computed } from "vue";
+import type { RenderedTask } from "@/types";
 
 interface Props {
-  task: RenderedTask
-  barHeight: number
-  columnWidth: number
-  chartStartDate: Date
-  viewMode: string
-  editDuration?: boolean
-  editPosition?: boolean
-  showProgress?: boolean
-  showTooltips?: boolean
+  task: RenderedTask;
+  barHeight: number;
+  columnWidth: number;
+  chartStartDate: Date;
+  viewMode: string;
+  editDuration?: boolean;
+  editPosition?: boolean;
+  showProgress?: boolean;
+  showTooltips?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
   editDuration: false,
   editPosition: false,
   showProgress: false,
-  showTooltips: true
-})
+  showTooltips: true,
+});
 
 const emit = defineEmits<{
-  'update:task': [taskId: string, updates: { start?: Date; end?: Date }]
-  'click': [event: MouseEvent, taskId: string]
-}>()
+  "update:task": [taskId: string, updates: { start?: Date; end?: Date }];
+  click: [event: MouseEvent, taskId: string];
+}>();
 
-const isDragging = ref(false)
-const dragType = ref<'move' | 'resize-left' | 'resize-right' | null>(null)
-const dragStartX = ref(0)
-const tempX = ref(0)
-const tempWidth = ref(0)
+const isDragging = ref(false);
+const dragType = ref<"move" | "resize-left" | "resize-right" | null>(null);
+const dragStartX = ref(0);
+const tempX = ref(0);
+const tempWidth = ref(0);
 
-const displayX = computed(() => isDragging.value ? tempX.value : props.task.x)
-const displayWidth = computed(() => isDragging.value ? tempWidth.value : props.task.width)
+const displayX = computed(() => (isDragging.value ? tempX.value : props.task.x));
+const displayWidth = computed(() => (isDragging.value ? tempWidth.value : props.task.width));
 
 const handleClick = (event: MouseEvent) => {
   // Don't emit click if we're dragging
-  if (isDragging.value) return
-  emit('click', event, props.task.id)
-}
+  if (isDragging.value) return;
+  emit("click", event, props.task.id);
+};
 
-const startDrag = (event: MouseEvent, type: 'move' | 'resize-left' | 'resize-right') => {
+const startDrag = (event: MouseEvent, type: "move" | "resize-left" | "resize-right") => {
   // Check permissions based on drag type
-  if (type === 'move' && !props.editPosition) return
-  if ((type === 'resize-left' || type === 'resize-right') && !props.editDuration) return
+  if (type === "move" && !props.editPosition) return;
+  if ((type === "resize-left" || type === "resize-right") && !props.editDuration) return;
 
-  event.preventDefault()
-  event.stopPropagation()
+  event.preventDefault();
+  event.stopPropagation();
 
-  isDragging.value = true
-  dragType.value = type
-  dragStartX.value = event.clientX
-  tempX.value = props.task.x
-  tempWidth.value = props.task.width
+  isDragging.value = true;
+  dragType.value = type;
+  dragStartX.value = event.clientX;
+  tempX.value = props.task.x;
+  tempWidth.value = props.task.width;
 
   const onMouseMove = (e: MouseEvent) => {
-    if (!isDragging.value) return
+    if (!isDragging.value) return;
 
-    const deltaX = e.clientX - dragStartX.value
+    const deltaX = e.clientX - dragStartX.value;
 
-    if (dragType.value === 'move') {
-      tempX.value = props.task.x + deltaX
-    } else if (dragType.value === 'resize-left') {
-      const newX = props.task.x + deltaX
-      const newWidth = props.task.width - deltaX
+    if (dragType.value === "move") {
+      tempX.value = props.task.x + deltaX;
+    } else if (dragType.value === "resize-left") {
+      const newX = props.task.x + deltaX;
+      const newWidth = props.task.width - deltaX;
       if (newWidth >= props.columnWidth) {
-        tempX.value = newX
-        tempWidth.value = newWidth
+        tempX.value = newX;
+        tempWidth.value = newWidth;
       }
-    } else if (dragType.value === 'resize-right') {
-      const newWidth = props.task.width + deltaX
+    } else if (dragType.value === "resize-right") {
+      const newWidth = props.task.width + deltaX;
       if (newWidth >= props.columnWidth) {
-        tempWidth.value = newWidth
+        tempWidth.value = newWidth;
       }
     }
-  }
+  };
 
   const onMouseUp = () => {
-    if (!isDragging.value) return
+    if (!isDragging.value) return;
 
     // Calculate new dates based on final position
-    const updates = calculateDateUpdates()
+    const updates = calculateDateUpdates();
 
     if (updates.start || updates.end) {
-      emit('update:task', props.task.id, updates)
+      emit("update:task", props.task.id, updates);
     }
 
-    isDragging.value = false
-    dragType.value = null
+    isDragging.value = false;
+    dragType.value = null;
 
-    document.removeEventListener('mousemove', onMouseMove)
-    document.removeEventListener('mouseup', onMouseUp)
-  }
+    document.removeEventListener("mousemove", onMouseMove);
+    document.removeEventListener("mouseup", onMouseUp);
+  };
 
-  document.addEventListener('mousemove', onMouseMove)
-  document.addEventListener('mouseup', onMouseUp)
-}
+  document.addEventListener("mousemove", onMouseMove);
+  document.addEventListener("mouseup", onMouseUp);
+};
 
 const calculateDateUpdates = () => {
-  const updates: { start?: Date; end?: Date } = {}
+  const updates: { start?: Date; end?: Date } = {};
 
-  if (dragType.value === 'move') {
+  if (dragType.value === "move") {
     // Calculate offset in days/columns
-    const offsetX = tempX.value - props.task.x
-    const offsetColumns = Math.round(offsetX / props.columnWidth)
+    const offsetX = tempX.value - props.task.x;
+    const offsetColumns = Math.round(offsetX / props.columnWidth);
 
     if (offsetColumns !== 0) {
-      const offsetMs = getOffsetMilliseconds(offsetColumns)
-      updates.start = new Date(props.task.start.getTime() + offsetMs)
-      updates.end = new Date(props.task.end.getTime() + offsetMs)
+      const offsetMs = getOffsetMilliseconds(offsetColumns);
+      updates.start = new Date(props.task.start.getTime() + offsetMs);
+      updates.end = new Date(props.task.end.getTime() + offsetMs);
     }
-  } else if (dragType.value === 'resize-left') {
-    const offsetX = tempX.value - props.task.x
-    const offsetColumns = Math.round(offsetX / props.columnWidth)
+  } else if (dragType.value === "resize-left") {
+    const offsetX = tempX.value - props.task.x;
+    const offsetColumns = Math.round(offsetX / props.columnWidth);
 
     if (offsetColumns !== 0) {
-      const offsetMs = getOffsetMilliseconds(offsetColumns)
-      updates.start = new Date(props.task.start.getTime() + offsetMs)
+      const offsetMs = getOffsetMilliseconds(offsetColumns);
+      updates.start = new Date(props.task.start.getTime() + offsetMs);
     }
-  } else if (dragType.value === 'resize-right') {
-    const widthDiff = tempWidth.value - props.task.width
-    const offsetColumns = Math.round(widthDiff / props.columnWidth)
+  } else if (dragType.value === "resize-right") {
+    const widthDiff = tempWidth.value - props.task.width;
+    const offsetColumns = Math.round(widthDiff / props.columnWidth);
 
     if (offsetColumns !== 0) {
-      const offsetMs = getOffsetMilliseconds(offsetColumns)
-      updates.end = new Date(props.task.end.getTime() + offsetMs)
+      const offsetMs = getOffsetMilliseconds(offsetColumns);
+      updates.end = new Date(props.task.end.getTime() + offsetMs);
     }
   }
 
-  return updates
-}
+  return updates;
+};
 
 const getOffsetMilliseconds = (columns: number): number => {
-  const mode = props.viewMode || 'day'
+  const mode = props.viewMode || "day";
 
   switch (mode) {
-    case '10min':
-      return columns * 10 * 60 * 1000
-    case '15min':
-      return columns * 15 * 60 * 1000
-    case 'hour':
-      return columns * 60 * 60 * 1000
-    case 'day':
-      return columns * 24 * 60 * 60 * 1000
-    case 'week':
-      return columns * 7 * 24 * 60 * 60 * 1000
-    case 'month':
+    case "10min":
+      return columns * 10 * 60 * 1000;
+    case "15min":
+      return columns * 15 * 60 * 1000;
+    case "hour":
+      return columns * 60 * 60 * 1000;
+    case "day":
+      return columns * 24 * 60 * 60 * 1000;
+    case "week":
+      return columns * 7 * 24 * 60 * 60 * 1000;
+    case "month":
       // Approximate - 30 days
-      return columns * 30 * 24 * 60 * 60 * 1000
-    case 'year':
+      return columns * 30 * 24 * 60 * 60 * 1000;
+    case "year":
       // Approximate - 365 days
-      return columns * 365 * 24 * 60 * 60 * 1000
+      return columns * 365 * 24 * 60 * 60 * 1000;
     default:
-      return columns * 24 * 60 * 60 * 1000
+      return columns * 24 * 60 * 60 * 1000;
   }
-}
+};
 </script>
 
 <style scoped>

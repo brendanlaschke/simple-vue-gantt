@@ -1,27 +1,27 @@
-import { defineConfig } from 'vitest/config';
+import { defineConfig } from "vitest/config";
 
 export default defineConfig({
   resolve: {
     alias: {
-      '@': '/Users/brendanlaschke/Documents/Leitart/vue-simple-gantt/src'
-    }
+      "@": "/Users/brendanlaschke/Documents/Leitart/vue-simple-gantt/src",
+    },
   },
   test: {
     globals: true,
-    environment: 'node',
+    environment: "node",
     coverage: {
-      provider: 'v8',
-      reporter: ['text', 'json', 'html'],
+      provider: "v8",
+      reporter: ["text", "json", "html"],
       exclude: [
-        'node_modules/',
-        'dist/',
-        'src/demo/**',
-        'src/__stories/**',
-        '**/*.stories.ts',
-        '**/*.test.ts',
-        '**/*.spec.ts',
-        '.storybook/**'
-      ]
-    }
-  }
+        "node_modules/",
+        "dist/",
+        "src/demo/**",
+        "src/__stories/**",
+        "**/*.stories.ts",
+        "**/*.test.ts",
+        "**/*.spec.ts",
+        ".storybook/**",
+      ],
+    },
+  },
 });

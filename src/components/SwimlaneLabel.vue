@@ -4,7 +4,7 @@
     :style="{
       height: `${height}px`,
       top: `${top}px`,
-      backgroundColor: color || '#f3f4f6'
+      backgroundColor: color || '#f3f4f6',
     }"
   >
     <span class="swimlane-label__text">{{ name }}</span>
@@ -13,13 +13,13 @@
 
 <script setup lang="ts">
 interface Props {
-  name: string
-  height: number
-  top: number
-  color?: string
+  name: string;
+  height: number;
+  top: number;
+  color?: string;
 }
 
-defineProps<Props>()
+defineProps<Props>();
 </script>
 
 <style scoped>
