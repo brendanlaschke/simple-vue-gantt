@@ -1270,64 +1270,6 @@ export function useGanttChart(
       }
     };
 
-    // Swimlane mode with project grouping
-    if (mergedOptions.value.enableSwimlanes && mergedOptions.value.enableProjectGrouping) {
-      const rendered: RenderedMilestone[] = [];
-
-      projects.value.forEach((project) => {
-        const isExpanded = projectStates.value.get(project.id) ?? true;
-
-        swimlanes.value.forEach((swimlane) => {
-          const projectSwimlaneMilestones = milestones.value.filter(
-            (m) => m.projectId === project.id && m.swimlaneId === swimlane.id
-          );
-
-          if (projectSwimlaneMilestones.length === 0) return;
-
-          // Find the rendered swimlane for this project+swimlane combo
-          const renderedSwimlane = renderedSwimlanes.value.find(
-            (rs) => rs.id === `${project.id}-${swimlane.id}`
-          );
-
-          if (!renderedSwimlane) return;
-
-          projectSwimlaneMilestones.forEach((milestone) => {
-            const x = calculateX(milestone.date);
-            rendered.push({
-              ...milestone,
-              x: Math.max(0, x),
-              y: renderedSwimlane.y, // Place at top of swimlane
-              isVisible: isExpanded,
-            });
-          });
-        });
-      });
-
-      // Handle orphan milestones grouped by swimlane
-      swimlanes.value.forEach((swimlane) => {
-        const orphanSwimlaneMilestones = milestones.value.filter(
-          (m) => !m.projectId && m.swimlaneId === swimlane.id
-        );
-
-        if (orphanSwimlaneMilestones.length === 0) return;
-
-        const renderedSwimlane = renderedSwimlanes.value.find((rs) => rs.id === swimlane.id);
-        if (!renderedSwimlane) return;
-
-        orphanSwimlaneMilestones.forEach((milestone) => {
-          const x = calculateX(milestone.date);
-          rendered.push({
-            ...milestone,
-            x: Math.max(0, x),
-            y: renderedSwimlane.y, // Place at top of swimlane
-            isVisible: true,
-          });
-        });
-      });
-
-      return rendered;
-    }
-
     // Swimlane mode (without project grouping)
     if (mergedOptions.value.enableSwimlanes) {
       const rendered: RenderedMilestone[] = [];
