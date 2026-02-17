@@ -257,7 +257,13 @@
 import { computed, toRefs, ref } from "vue";
 import type { GanttTask, GanttMilestone, GanttProject, GanttSwimlane, GanttOptions } from "@/types";
 import { useGanttChart } from "@/composables/useGanttChart";
-import { getDaysDiff, getMinutesDiff, getHoursDiff, getMonthsDiff, getYearsDiff } from "@/utils/dateDifference";
+import {
+  getDaysDiff,
+  getMinutesDiff,
+  getHoursDiff,
+  getMonthsDiff,
+  getYearsDiff,
+} from "@/utils/dateDifference";
 import { OverlayScrollbarsComponent } from "overlayscrollbars-vue";
 import type { OverlayScrollbars } from "overlayscrollbars";
 import "overlayscrollbars/overlayscrollbars.css";
@@ -454,9 +460,9 @@ const todayX = computed(() => {
   if (today < chartStartDate.value || today > chartEndDate.value) {
     return null;
   }
-  
+
   const viewMode = options.value.viewMode ?? "day";
-  
+
   switch (viewMode) {
     case "10min": {
       const minutes = getMinutesDiff(chartStartDate.value, today);
