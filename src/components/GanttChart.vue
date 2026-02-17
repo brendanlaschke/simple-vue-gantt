@@ -257,7 +257,7 @@
 import { computed, toRefs, ref } from "vue";
 import type { GanttTask, GanttMilestone, GanttProject, GanttSwimlane, GanttOptions } from "@/types";
 import { useGanttChart } from "@/composables/useGanttChart";
-import { getDaysDiff } from "@/utils/dateDifference";
+import { getDaysDiff, getMinutesDiff, getHoursDiff, getMonthsDiff, getYearsDiff } from "@/utils/dateDifference";
 import { OverlayScrollbarsComponent } from "overlayscrollbars-vue";
 import type { OverlayScrollbars } from "overlayscrollbars";
 import "overlayscrollbars/overlayscrollbars.css";
@@ -454,8 +454,41 @@ const todayX = computed(() => {
   if (today < chartStartDate.value || today > chartEndDate.value) {
     return null;
   }
-  const daysDiff = getDaysDiff(chartStartDate.value, today);
-  return daysDiff * columnWidth.value;
+  
+  const viewMode = options.value.viewMode ?? "day";
+  
+  switch (viewMode) {
+    case "10min": {
+      const minutes = getMinutesDiff(chartStartDate.value, today);
+      return (minutes / 10) * columnWidth.value;
+    }
+    case "15min": {
+      const minutes = getMinutesDiff(chartStartDate.value, today);
+      return (minutes / 15) * columnWidth.value;
+    }
+    case "hour": {
+      const hours = getHoursDiff(chartStartDate.value, today);
+      return hours * columnWidth.value;
+    }
+    case "day": {
+      const days = getDaysDiff(chartStartDate.value, today);
+      return days * columnWidth.value;
+    }
+    case "week": {
+      const days = getDaysDiff(chartStartDate.value, today);
+      return (days / 7) * columnWidth.value;
+    }
+    case "month": {
+      const months = getMonthsDiff(chartStartDate.value, today);
+      return months * columnWidth.value;
+    }
+    case "year": {
+      const years = getYearsDiff(chartStartDate.value, today);
+      return years * columnWidth.value;
+    }
+    default:
+      return getDaysDiff(chartStartDate.value, today) * columnWidth.value;
+  }
 });
 
 // Calculate dependency arrows
