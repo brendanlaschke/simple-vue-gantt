@@ -7,7 +7,7 @@
     <span class="project-header__toggle">
       {{ isExpanded ? "▼" : "▶" }}
     </span>
-    <span class="project-header__name">{{ name }}</span>
+    <span class="project-header__name" @click.stop="$emit('click')">{{ name }}</span>
     <span class="project-header__count">({{ taskCount }})</span>
   </div>
 </template>
@@ -24,6 +24,7 @@ interface Props {
 defineProps<Props>();
 defineEmits<{
   toggle: [];
+  click: [];
 }>();
 </script>
 

@@ -1270,32 +1270,6 @@ export function useGanttChart(
       }
     };
 
-    // Swimlane mode (without project grouping)
-    if (mergedOptions.value.enableSwimlanes) {
-      const rendered: RenderedMilestone[] = [];
-
-      swimlanes.value.forEach((swimlane) => {
-        const swimlaneMilestones = milestones.value.filter((m) => m.swimlaneId === swimlane.id);
-
-        if (swimlaneMilestones.length === 0) return;
-
-        const renderedSwimlane = renderedSwimlanes.value.find((rs) => rs.id === swimlane.id);
-        if (!renderedSwimlane) return;
-
-        swimlaneMilestones.forEach((milestone) => {
-          const x = calculateX(milestone.date);
-          rendered.push({
-            ...milestone,
-            x: Math.max(0, x),
-            y: renderedSwimlane.y, // Place at top of swimlane
-            isVisible: true,
-          });
-        });
-      });
-
-      return rendered;
-    }
-
     // Project grouping mode (without swimlanes)
     if (mergedOptions.value.enableProjectGrouping) {
       const rendered: RenderedMilestone[] = [];

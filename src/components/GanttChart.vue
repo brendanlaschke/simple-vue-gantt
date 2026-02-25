@@ -25,6 +25,7 @@
                   :is-expanded="project.isExpanded"
                   :task-count="project.taskCount"
                   @toggle="toggleProject(project.id)"
+                  @click="handleProjectClick(project.id)"
                 />
 
                 <!-- Swimlanes within this project -->
@@ -36,6 +37,7 @@
                     :height="swimlane.height"
                     :top="swimlane.y"
                     :color="swimlane.color"
+                    @click="handleSwimlaneClick(swimlane.id)"
                   />
                 </template>
               </template>
@@ -48,6 +50,7 @@
                 :height="swimlane.height"
                 :top="swimlane.y"
                 :color="swimlane.color"
+                @click="handleSwimlaneClick(swimlane.id)"
               />
             </template>
 
@@ -60,6 +63,7 @@
                 :height="swimlane.height"
                 :top="swimlane.y"
                 :color="swimlane.color"
+                @click="handleSwimlaneClick(swimlane.id)"
               />
             </template>
 
@@ -74,6 +78,7 @@
                   :is-expanded="project.isExpanded"
                   :task-count="project.taskCount"
                   @toggle="toggleProject(project.id)"
+                  @click="handleProjectClick(project.id)"
                 />
 
                 <!-- Project Tasks -->
@@ -134,6 +139,16 @@
               :column-width="columnWidth"
               :primary-periods="primaryPeriods"
               :use-two-row-headers="useTwoRowHeaders"
+            />
+            <!-- Milestone Header Row -->
+            <MilestoneHeaderRow
+              v-if="showMilestonesInHeader"
+              :milestones="renderedMilestones"
+              :chart-width="chartWidth"
+              :milestone-size="milestoneSize"
+              :height="milestoneHeaderHeight"
+              :show-label="showMilestoneLabels"
+              @click="handleMilestoneClick"
             />
           </div>
         </OverlayScrollbarsComponent>
@@ -231,7 +246,7 @@
               </g>
 
               <!-- Milestones -->
-              <g class="vue-gantt__milestones">
+              <g v-if="!showMilestonesInHeader" class="vue-gantt__milestones">
                 <MilestoneMarker
                   v-for="milestone in visibleMilestones"
                   :key="milestone.id"
@@ -280,6 +295,7 @@ import SwimlaneLabel from "./SwimlaneLabel.vue";
 import ProjectSummaryBar from "./ProjectSummaryBar.vue";
 import ProjectGroupBackground from "./ProjectGroupBackground.vue";
 import SwimlaneBackground from "./SwimlaneBackground.vue";
+import MilestoneHeaderRow from "./MilestoneHeaderRow.vue";
 import { createRectangularPath } from "../utils/rectangularEdge";
 
 const props = withDefaults(
@@ -305,8 +321,8 @@ const emit = defineEmits<{
   "task:resize": [taskId: string, start: Date, end: Date];
   click: [
     event: MouseEvent,
-    type: "task" | "milestone" | "summary",
-    data: GanttTask | GanttMilestone | GanttProject,
+    type: "task" | "milestone" | "summary" | "project" | "swimlane",
+    data: GanttTask | GanttMilestone | GanttProject | GanttSwimlane,
   ];
 }>();
 
@@ -349,6 +365,8 @@ const hideOrphanDependencies = computed(() => options.value.hideOrphanDependenci
 const showProjectSummary = computed(() => options.value.showProjectSummary !== false);
 const showTaskProgress = computed(() => options.value.showTaskProgress || false);
 const showTooltips = computed(() => options.value.showTooltips !== false);
+const showMilestonesInHeader = computed(() => options.value.showMilestonesInHeader || false);
+const milestoneHeaderHeight = computed(() => options.value.milestoneHeaderHeight ?? 40);
 const sidebarTitle = computed(() => {
   if (options.value.sidebarTitle) {
     return options.value.sidebarTitle;
@@ -420,6 +438,22 @@ const handleSummaryClick = (event: MouseEvent, projectId: string) => {
   const project = projects.value.find((p) => p.id === projectId);
   if (project) {
     emit("click", event, "summary", project);
+  }
+};
+
+// Handle click events on project names
+const handleProjectClick = (projectId: string) => {
+  const project = projects.value.find((p) => p.id === projectId);
+  if (project) {
+    emit("click", new MouseEvent("click"), "project", project);
+  }
+};
+
+// Handle click events on swimlane names
+const handleSwimlaneClick = (swimlaneId: string) => {
+  const swimlane = swimlanes.value.find((s) => s.id === swimlaneId);
+  if (swimlane) {
+    emit("click", new MouseEvent("click"), "swimlane", swimlane);
   }
 };
 

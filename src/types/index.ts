@@ -40,8 +40,6 @@ export interface GanttMilestone {
   color?: string;
   /** Optional project ID this milestone belongs to */
   projectId?: string;
-  /** Optional swim lane ID this milestone belongs to */
-  swimlaneId?: string;
   /** Optional array of task/milestone IDs this milestone depends on */
   dependencies?: string[];
   /** Optional metadata that can be attached to the milestone */
@@ -111,6 +109,10 @@ export interface GanttOptions {
   milestoneSize?: number;
   /** Whether to show milestone labels */
   showMilestoneLabels?: boolean;
+  /** Whether to show all milestones in a fixed row below the timeline header */
+  showMilestonesInHeader?: boolean;
+  /** Height of the milestone header row in pixels (when showMilestonesInHeader is enabled) */
+  milestoneHeaderHeight?: number;
   /** Whether to allow editing task duration (resizing) */
   editDuration?: boolean;
   /** Whether to allow editing task position (moving) */

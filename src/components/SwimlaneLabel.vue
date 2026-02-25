@@ -6,6 +6,7 @@
       top: `${top}px`,
       backgroundColor: color || '#f3f4f6',
     }"
+    @click="$emit('click')"
   >
     <span class="swimlane-label__text">{{ name }}</span>
   </div>
@@ -20,6 +21,9 @@ interface Props {
 }
 
 defineProps<Props>();
+defineEmits<{
+  click: [];
+}>();
 </script>
 
 <style scoped>
@@ -31,6 +35,12 @@ defineProps<Props>();
   font-weight: 600;
   color: #374151;
   box-sizing: border-box;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.swimlane-label:hover {
+  filter: brightness(0.95);
 }
 
 .swimlane-label__text {
