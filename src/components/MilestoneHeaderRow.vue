@@ -9,7 +9,7 @@
       >
         <!-- Milestone Diamond -->
         <path
-          :d="getMilestonePath(milestone.x, height / 2)"
+          :d="getMilestonePath(milestone.x, milestoneSize / 2 + 2)"
           :fill="milestone.color || '#f59e0b'"
           :stroke="milestone.color || '#f59e0b'"
           stroke-width="2"
@@ -20,7 +20,7 @@
         <text
           v-if="showLabel"
           :x="milestone.x"
-          :y="height / 2 + milestoneSize + 12"
+          :y="milestoneSize + 16"
           text-anchor="middle"
           class="milestone-header-item__label"
           fill="#374151"
