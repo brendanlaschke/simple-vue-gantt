@@ -549,6 +549,7 @@ export const WithMilestones: Story = {
       viewMode: "day",
       showMilestoneLabels: true,
       showDependencies: true,
+      showMilestonesInHeader: false,
     },
   },
 };
@@ -689,6 +690,7 @@ export const WithMilestonesAndProjectGrouping: Story = {
       showMilestoneLabels: true,
       showDependencies: true,
       showProjectSummary: true,
+      showMilestonesInHeader: false,
     },
   },
   parameters: {
@@ -696,6 +698,28 @@ export const WithMilestonesAndProjectGrouping: Story = {
       description: {
         story:
           "Demonstrates milestones within project grouping. Each project has its own milestones that appear on the project header row. Milestones remain visible even when projects are collapsed.",
+      },
+    },
+  },
+};
+
+// With Milestones in Header Row
+export const WithMilestonesInHeader: Story = {
+  args: {
+    tasks: milestoneTasks,
+    milestones: milestones,
+    options: {
+      viewMode: "day",
+      showMilestoneLabels: true,
+      showDependencies: true,
+      showMilestonesInHeader: true,
+    },
+  },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "Demonstrates milestones displayed in a fixed header row below the timeline. When enabled, all milestones appear in a dedicated row at the top of the chart for better visibility.",
       },
     },
   },

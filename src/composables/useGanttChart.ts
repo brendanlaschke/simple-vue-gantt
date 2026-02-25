@@ -70,6 +70,8 @@ const DEFAULT_OPTIONS: Required<GanttOptions> = {
   showTaskProgress: false,
   sidebarTitle: "",
   showTooltips: false,
+  showMilestonesInHeader: false,
+  milestoneHeaderHeight: 20,
 };
 
 export function useGanttChart(

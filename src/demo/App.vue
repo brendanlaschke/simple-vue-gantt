@@ -83,6 +83,11 @@
           <label for="showTaskProgress">Show Task Progress (%)</label>
           <input id="showTaskProgress" v-model="showTaskProgress" type="checkbox" />
         </div>
+
+        <div class="control">
+          <label for="showMilestonesInHeader">Show Milestones in Header</label>
+          <input id="showMilestonesInHeader" v-model="showMilestonesInHeader" type="checkbox" />
+        </div>
       </div>
     </div>
 
@@ -330,6 +335,7 @@ const editPosition = ref(true);
 const editDuration = ref(true);
 const hideOrphanDependencies = ref(false);
 const showTaskProgress = ref(false);
+const showMilestonesInHeader = ref(false);
 
 // Event log
 interface LogEvent {
@@ -449,5 +455,6 @@ const options = computed<GanttOptions>(() => ({
   editDuration: editDuration.value,
   hideOrphanDependencies: hideOrphanDependencies.value,
   showTaskProgress: showTaskProgress.value,
+  showMilestonesInHeader: showMilestonesInHeader.value,
 }));
 </script>

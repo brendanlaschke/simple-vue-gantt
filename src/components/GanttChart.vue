@@ -3,7 +3,12 @@
     <div class="vue-gantt__container">
       <!-- Sidebar with Task Names -->
       <div class="vue-gantt__sidebar-column">
-        <GanttSidebar :title="sidebarTitle" :use-two-row-headers="useTwoRowHeaders" />
+        <GanttSidebar
+          :title="sidebarTitle"
+          :use-two-row-headers="useTwoRowHeaders"
+          :show-milestone-header-spacer="showMilestonesInHeader"
+          :milestone-header-height="milestoneHeaderHeight"
+        />
         <OverlayScrollbarsComponent
           :options="{
             scrollbars: { visibility: 'hidden' },
