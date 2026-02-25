@@ -402,8 +402,8 @@ const onTaskResize = (taskId: string, start: Date, end: Date) => {
 
 const onClick = (
   _event: MouseEvent,
-  type: "task" | "milestone" | "summary",
-  data: GanttTask | GanttMilestone | GanttProject
+  type: "task" | "summary" | "milestone" | "project" | "swimlane",
+  data: GanttTask | GanttMilestone | GanttProject | GanttSwimlane
 ) => {
   let name = "";
   let details = "";

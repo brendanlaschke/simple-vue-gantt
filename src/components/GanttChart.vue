@@ -321,7 +321,7 @@ const emit = defineEmits<{
   "task:resize": [taskId: string, start: Date, end: Date];
   click: [
     event: MouseEvent,
-    type: "task" | "milestone" | "summary" | "project" | "swimlane",
+    type: "task" | "summary" | "milestone" | "project" | "swimlane",
     data: GanttTask | GanttMilestone | GanttProject | GanttSwimlane,
   ];
 }>();
