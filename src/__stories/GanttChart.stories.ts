@@ -466,6 +466,49 @@ export const WithProjectGrouping: Story = {
   },
 };
 
+export const WithCollapseExpandAll: Story = {
+  args: {
+    tasks: projectTasks,
+    projects: projects,
+    options: {
+      viewMode: "day",
+      enableProjectGrouping: true,
+      showProjectSummary: true,
+      showCollapseExpandAll: true,
+    },
+  },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "Shows a collapse/expand all button (⊟/⊞) in the sidebar header. Click it to collapse or expand all project groups at once. Requires `enableProjectGrouping: true`.",
+      },
+    },
+  },
+};
+
+export const WithProjectsCollapsedByDefault: Story = {
+  args: {
+    tasks: projectTasks,
+    projects: projects,
+    options: {
+      viewMode: "day",
+      enableProjectGrouping: true,
+      showProjectSummary: true,
+      showCollapseExpandAll: true,
+      projectsCollapsedByDefault: true,
+    },
+  },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "All projects start in the collapsed state. Individual projects can still be expanded by clicking their header row. Combined with `showCollapseExpandAll` to let the user expand everything at once.",
+      },
+    },
+  },
+};
+
 // With Milestones
 const milestoneTasks: GanttTask[] = [
   {
@@ -1175,6 +1218,50 @@ export const SwimlanesWithOverlappingTasks: Story = {
       description: {
         story:
           "Demonstrates automatic task packing in swim lanes. Team A has overlapping tasks that are packed into multiple rows, while Team B has sequential tasks in a single row.",
+      },
+    },
+  },
+};
+
+// Project summary with custom color and progress
+const coloredProjects: GanttProject[] = [
+  {
+    id: "project-1",
+    name: "Planning & Requirements",
+    color: "#10b981",
+    progress: 100,
+  },
+  {
+    id: "project-2",
+    name: "Frontend Development",
+    color: "#3b82f6",
+    progress: 60,
+  },
+  {
+    id: "project-3",
+    name: "Backend Development",
+    color: "#f59e0b",
+    progress: 75,
+  },
+];
+
+export const WithProjectSummaryColors: Story = {
+  args: {
+    tasks: projectTasks,
+    projects: coloredProjects,
+    options: {
+      viewMode: "day",
+      enableProjectGrouping: true,
+      showProjectSummary: true,
+      showTaskProgress: true,
+      projectHeaderHeight: 40,
+    },
+  },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "Each project has a custom color and a progress value. The project summary bar renders in the project's color, with a full-opacity fill showing the progress percentage — matching the same visual style as individual task bars.",
       },
     },
   },

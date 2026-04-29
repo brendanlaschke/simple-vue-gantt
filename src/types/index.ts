@@ -54,6 +54,10 @@ export interface GanttProject {
   id: string;
   /** Display name of the project */
   name: string;
+  /** Optional custom color for the project summary bar */
+  color?: string;
+  /** Optional progress percentage (0–100) shown on the project summary bar */
+  progress?: number;
   /** Optional metadata that can be attached to the project */
   metadata?: Record<string, unknown>;
 }
@@ -129,6 +133,10 @@ export interface GanttOptions {
   sidebarTitle?: string;
   /** Whether to show tooltips with full task name on hover */
   showTooltips?: boolean;
+  /** Whether to show a collapse all / expand all button in the sidebar header (requires enableProjectGrouping) */
+  showCollapseExpandAll?: boolean;
+  /** Whether projects start collapsed by default (requires enableProjectGrouping) */
+  projectsCollapsedByDefault?: boolean;
 }
 
 /**

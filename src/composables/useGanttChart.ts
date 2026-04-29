@@ -44,6 +44,9 @@ export interface UseGanttChartReturn {
   chartWidth: ComputedRef<number>;
   chartHeight: ComputedRef<number>;
   toggleProject: (projectId: string) => void;
+  collapseAll: () => void;
+  expandAll: () => void;
+  areAllExpanded: ComputedRef<boolean>;
   projectStates: Ref<Map<string, boolean>>;
 }
 
@@ -72,6 +75,8 @@ const DEFAULT_OPTIONS: Required<GanttOptions> = {
   showTooltips: false,
   showMilestonesInHeader: false,
   milestoneHeaderHeight: 20,
+  showCollapseExpandAll: false,
+  projectsCollapsedByDefault: false,
 };
 
 export function useGanttChart(
@@ -97,13 +102,16 @@ export function useGanttChart(
    * Calculate the start date for the chart timeline
    */
   const chartStartDate = computed<Date>(() => {
-    if (tasks.value.length === 0) {
+    if (tasks.value.length === 0 && milestones.value.length === 0) {
       return startOfDay(new Date());
     }
 
-    const minDate = tasks.value.reduce((min: Date, task: GanttTask) => {
-      return task.start < min ? task.start : min;
-    }, tasks.value[0].start);
+    const candidates: Date[] = [
+      ...tasks.value.map((t: GanttTask) => t.start),
+      ...milestones.value.map((m: GanttMilestone) => m.date),
+    ];
+
+    const minDate = candidates.reduce((min, d) => (d < min ? d : min), candidates[0]);
 
     return getViewModeStartDate(minDate, viewMode.value);
   });
@@ -112,13 +120,16 @@ export function useGanttChart(
    * Calculate the end date for the chart timeline
    */
   const chartEndDate = computed<Date>(() => {
-    if (tasks.value.length === 0) {
+    if (tasks.value.length === 0 && milestones.value.length === 0) {
       return startOfDay(new Date());
     }
 
-    const maxDate = tasks.value.reduce((max: Date, task: GanttTask) => {
-      return task.end > max ? task.end : max;
-    }, tasks.value[0].end);
+    const candidates: Date[] = [
+      ...tasks.value.map((t: GanttTask) => t.end),
+      ...milestones.value.map((m: GanttMilestone) => m.date),
+    ];
+
+    const maxDate = candidates.reduce((max, d) => (d > max ? d : max), candidates[0]);
 
     return maxDate;
   });
@@ -127,9 +138,10 @@ export function useGanttChart(
    * Initialize project states - all expanded by default
    */
   const initializeProjectStates = () => {
+    const defaultExpanded = !mergedOptions.value.projectsCollapsedByDefault;
     projects.value.forEach((project) => {
       if (!projectStates.value.has(project.id)) {
-        projectStates.value.set(project.id, true);
+        projectStates.value.set(project.id, defaultExpanded);
       }
     });
   };
@@ -146,6 +158,21 @@ export function useGanttChart(
     const currentState = projectStates.value.get(projectId) ?? true;
     projectStates.value.set(projectId, !currentState);
   };
+
+  /** Collapse all projects */
+  const collapseAll = () => {
+    projects.value.forEach((p) => projectStates.value.set(p.id, false));
+  };
+
+  /** Expand all projects */
+  const expandAll = () => {
+    projects.value.forEach((p) => projectStates.value.set(p.id, true));
+  };
+
+  /** Whether all projects are currently expanded */
+  const areAllExpanded = computed(() =>
+    projects.value.every((p) => projectStates.value.get(p.id) !== false)
+  );
 
   /**
    * Generate rendered projects with state
@@ -1415,6 +1442,9 @@ export function useGanttChart(
     chartWidth,
     chartHeight,
     toggleProject,
+    collapseAll,
+    expandAll,
+    areAllExpanded,
     projectStates,
   };
 }

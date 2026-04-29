@@ -88,6 +88,20 @@
           <label for="showMilestonesInHeader">Show Milestones in Header</label>
           <input id="showMilestonesInHeader" v-model="showMilestonesInHeader" type="checkbox" />
         </div>
+
+        <div class="control">
+          <label for="showCollapseExpandAll">Show Collapse/Expand All Button</label>
+          <input id="showCollapseExpandAll" v-model="showCollapseExpandAll" type="checkbox" />
+        </div>
+
+        <div class="control">
+          <label for="projectsCollapsedByDefault">Projects Collapsed by Default</label>
+          <input
+            id="projectsCollapsedByDefault"
+            v-model="projectsCollapsedByDefault"
+            type="checkbox"
+          />
+        </div>
       </div>
     </div>
 
@@ -336,6 +350,8 @@ const editDuration = ref(true);
 const hideOrphanDependencies = ref(false);
 const showTaskProgress = ref(false);
 const showMilestonesInHeader = ref(false);
+const showCollapseExpandAll = ref(false);
+const projectsCollapsedByDefault = ref(false);
 
 // Event log
 interface LogEvent {
@@ -456,5 +472,7 @@ const options = computed<GanttOptions>(() => ({
   hideOrphanDependencies: hideOrphanDependencies.value,
   showTaskProgress: showTaskProgress.value,
   showMilestonesInHeader: showMilestonesInHeader.value,
+  showCollapseExpandAll: showCollapseExpandAll.value,
+  projectsCollapsedByDefault: projectsCollapsedByDefault.value,
 }));
 </script>

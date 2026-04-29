@@ -8,6 +8,12 @@
           :use-two-row-headers="useTwoRowHeaders"
           :show-milestone-header-spacer="showMilestonesInHeader"
           :milestone-header-height="milestoneHeaderHeight"
+          :show-collapse-expand-all="
+            enableProjectGrouping && (options.showCollapseExpandAll ?? false)
+          "
+          :are-all-expanded="areAllExpanded"
+          @collapse-all="collapseAll"
+          @expand-all="expandAll"
         />
         <OverlayScrollbarsComponent
           :options="{
@@ -227,6 +233,8 @@
                   :width="project.width || 0"
                   :height="projectHeaderHeight"
                   :bar-height="(projectHeaderHeight / 4) * 3"
+                  :color="project.color"
+                  :progress="project.progress"
                   @click="handleSummaryClick"
                 />
               </g>
@@ -344,6 +352,9 @@ const {
   chartWidth,
   chartHeight,
   toggleProject,
+  collapseAll,
+  expandAll,
+  areAllExpanded,
 } = useGanttChart(
   computed(() => tasks.value),
   computed(() => milestones.value),
