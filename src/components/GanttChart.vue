@@ -294,7 +294,6 @@ import {
 } from "@/utils/dateDifference";
 import { OverlayScrollbarsComponent } from "overlayscrollbars-vue";
 import type { OverlayScrollbars } from "overlayscrollbars";
-// @ts-expect-error - No types available for OverlayScrollbarsComponent
 import "overlayscrollbars/overlayscrollbars.css";
 import GanttSidebar from "./GanttSidebar.vue";
 import TimelineHeader from "./TimelineHeader.vue";
